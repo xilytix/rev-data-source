@@ -1,0 +1,15 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
+{
+  "extends": "../../tsconfig.code.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../../../tsbuildinfo/rev-data-source-definition.tsbuildinfo"
+  },
+  "include": [
+    "*.ts"
+  ],
+  "references": [
+    { "path": "../../table/tsconfig.json" },
+    { "path": "../../grid-layout/tsconfig.json" },
+  ]
+}

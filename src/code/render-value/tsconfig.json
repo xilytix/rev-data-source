@@ -1,0 +1,14 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
+{
+  "extends": "../tsconfig.code.json",
+
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "../../../tsbuildinfo/rev-render-value.tsbuildinfo"
+  },
+
+  "include": [
+    "*.ts"
+  ]
+}

@@ -1,0 +1,45 @@
+// (c) 2024 Xilytix Pty Ltd
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitOverride": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": false,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "./lib",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "ES2022"
+    ],
+    "rootDir": "src",
+    "paths": {
+    },
+    // "traceResolution": true, // can use this to debug paths
+  },
+
+  "include": [
+    "./src/code/**/*.ts"
+  ],
+}
