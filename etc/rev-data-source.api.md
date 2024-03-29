@@ -10,6 +10,7 @@ import { Guid } from '@xilytix/sysutils';
 import { HorizontalAlign } from '@xilytix/revgrid';
 import { IndexedRecord } from '@xilytix/sysutils';
 import { Integer } from '@xilytix/sysutils';
+import { InternalError } from '@xilytix/sysutils';
 import { JsonElement } from '@xilytix/sysutils';
 import { LockItemByKeyList } from '@xilytix/sysutils';
 import { LockOpenListItem } from '@xilytix/sysutils';
@@ -18,12 +19,10 @@ import { MultiEvent } from '@xilytix/sysutils';
 import { NamedLocker } from '@xilytix/sysutils';
 import { NamedOpener } from '@xilytix/sysutils';
 import { Result } from '@xilytix/sysutils';
-import { RevRecordField } from '@xilytix/revgrid';
-import { RevRecordFieldIndex } from '@xilytix/revgrid';
-import { RevRecordIndex } from '@xilytix/revgrid';
-import { RevRecordInvalidatedValue } from '@xilytix/revgrid';
-import { RevRecordStore } from '@xilytix/revgrid';
-import { RevRecordValueRecentChangeTypeId } from '@xilytix/revgrid';
+import { RevListChangedEventer } from '@xilytix/revgrid';
+import { SchemaField } from '@xilytix/revgrid';
+import { SchemaServer } from '@xilytix/revgrid';
+import { UnreachableCaseInternalError } from '@xilytix/sysutils';
 import { UsableListChangeTypeId } from '@xilytix/sysutils';
 
 // @public (undocumented)
@@ -851,6 +850,444 @@ export namespace RevGridSortDefinition {
         // (undocumented)
         export function tryCreateFromJson(element: JsonElement): Field | undefined;
     }
+}
+
+// @public (undocumented)
+export interface RevRecord {
+    // (undocumented)
+    __rows?: RevRecord.BoundRows;
+    // (undocumented)
+    index: number;
+}
+
+// @public (undocumented)
+export namespace RevRecord {
+    // (undocumented)
+    export function bindRow(record: RevRecord, rowKey: symbol, row: RevRecordRow | undefined): void;
+    // Warning: (ae-forgotten-export) The symbol "RevRecordRow" needs to be exported by the entry point public-api.d.ts
+    export type BoundRows = Record<symbol, RevRecordRow | undefined>;
+    // (undocumented)
+    export function getBoundRow(record: RevRecord, rowKey: symbol): RevRecordRow | undefined;
+    // (undocumented)
+    export function takeBoundRow(record: RevRecord, rowKey: symbol): RevRecordRow | undefined;
+    // (undocumented)
+    export function unbindRow(record: RevRecord, rowKey: symbol): void;
+}
+
+// @public (undocumented)
+export class RevRecordAssertError extends InternalError {
+    constructor(code: string, message?: string);
+}
+
+// @public (undocumented)
+export interface RevRecordData extends RevRecord {
+    // (undocumented)
+    data: DataServer.ViewRow;
+}
+
+// @public (undocumented)
+export class RevRecordDataError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordDataServer<SF extends RevRecordField> implements DataServer<SF>, RevRecordStore.RecordsEventers {
+    constructor(_schemaServer: RevRecordSchemaServer<SF>, _recordStore: RevRecordStore);
+    // (undocumented)
+    get allChangedRecentDuration(): number;
+    set allChangedRecentDuration(value: number);
+    // (undocumented)
+    allRecordsDeleted(): void;
+    // (undocumented)
+    beginChange(): void;
+    // (undocumented)
+    clearSort(): boolean;
+    // (undocumented)
+    clearSortFieldSpecifiers(): void;
+    // (undocumented)
+    get continuousFiltering(): boolean;
+    set continuousFiltering(value: boolean);
+    // (undocumented)
+    destroy(): void;
+    // (undocumented)
+    endChange(): void;
+    // (undocumented)
+    get filterCallback(): RevRecordDataServer.RecordFilterCallback | undefined;
+    set filterCallback(value: RevRecordDataServer.RecordFilterCallback | undefined);
+    // (undocumented)
+    getEditValue(field: SF, rowIndex: number): DataServer.EditValue;
+    // (undocumented)
+    getFieldSortAscending(field: RevRecordFieldIndex | SF): boolean | undefined;
+    // (undocumented)
+    getFieldSortPriority(field: RevRecordFieldIndex | SF): number | undefined;
+    // (undocumented)
+    getRecordIndexFromRowIndex(rowIndex: number): RevRecordIndex;
+    // (undocumented)
+    getRecordRecentChangeTypeId(rowIndex: number): RevRecordRecentChangeTypeId | undefined;
+    // (undocumented)
+    getRowCount(): number;
+    // (undocumented)
+    getRowIdFromIndex(rowIndex: number): unknown;
+    // (undocumented)
+    getRowIndexFromId(rowId: unknown): number | undefined;
+    // (undocumented)
+    getRowIndexFromRecordIndex(recordIndex: RevRecordIndex): number | undefined;
+    // (undocumented)
+    getSortSpecifier(index: number): RevRecordDataServer.SortFieldSpecifier;
+    // (undocumented)
+    getValueRecentChangeTypeId(field: SF, rowIndex: number): RevRecordValueRecentChangeTypeId | undefined;
+    // (undocumented)
+    getViewValue(field: SF, rowIndex: number): DataServer.ViewValue;
+    // (undocumented)
+    invalidateAll(): void;
+    // (undocumented)
+    invalidateFields(fieldIndexes: readonly RevRecordFieldIndex[]): void;
+    // (undocumented)
+    invalidateFiltering(): void;
+    // (undocumented)
+    invalidateRecord(recordIndex: RevRecordIndex, recent?: boolean): void;
+    // (undocumented)
+    invalidateRecordAndValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[], recordUpdateRecent?: boolean): void;
+    // (undocumented)
+    invalidateRecordFields(recordIndex: RevRecordIndex, fieldIndex: RevRecordFieldIndex, fieldCount: number): void;
+    // (undocumented)
+    invalidateRecords(recordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+    // (undocumented)
+    invalidateRecordValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[]): void;
+    // (undocumented)
+    invalidateValue(fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex, valueRecentChangeTypeId?: RevRecordValueRecentChangeTypeId): void;
+    // (undocumented)
+    isAnyFieldInRangeSorted(rangeFieldIndex: number, rangeCount: number): boolean;
+    // (undocumented)
+    isAnyFieldSorted(fieldIndexes: readonly RevRecordFieldIndex[]): boolean;
+    // (undocumented)
+    isFieldSorted(fieldIndex: RevRecordFieldIndex): boolean;
+    // (undocumented)
+    get isFiltered(): boolean;
+    // Warning: (ae-forgotten-export) The symbol "RevRecordRecentChanges" needs to be exported by the entry point public-api.d.ts
+    //
+    // (undocumented)
+    get recentChanges(): RevRecordRecentChanges;
+    // (undocumented)
+    get recordCount(): number;
+    // (undocumented)
+    recordDeleted(recordIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordInserted(recordIndex: RevRecordIndex, recent?: boolean): void;
+    // (undocumented)
+    get recordInsertedRecentDuration(): number;
+    set recordInsertedRecentDuration(value: number);
+    // (undocumented)
+    recordMoved(fromIndex: RevRecordIndex, toIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordReplaced(recordIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordsDeleted(recordIndex: number, count: number): void;
+    // (undocumented)
+    recordsInserted(firstInsertedRecordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+    // (undocumented)
+    recordsLoaded(recent?: boolean): void;
+    // (undocumented)
+    recordsMoved(fromIndex: RevRecordIndex, toIndex: RevRecordIndex, moveCount: number): void;
+    // (undocumented)
+    recordsReplaced(recordIndex: RevRecordIndex, count: number): void;
+    // (undocumented)
+    recordsSpliced(recordIndex: RevRecordIndex, deleteCount: number, insertCount: number): void;
+    // (undocumented)
+    get recordUpdatedRecentDuration(): number;
+    set recordUpdatedRecentDuration(value: number);
+    // (undocumented)
+    reset(): void;
+    // (undocumented)
+    reverseRowIndex(rowIndex: number): number;
+    // (undocumented)
+    reverseRowIndexIfRowOrderReversed(rowIndex: number): number;
+    // (undocumented)
+    get rowCount(): number;
+    // (undocumented)
+    get rowOrderReversed(): boolean;
+    set rowOrderReversed(value: boolean);
+    // (undocumented)
+    setEditValue(field: SF, rowIndex: number, value: DataServer.EditValue): void;
+    // (undocumented)
+    sort(): void;
+    // (undocumented)
+    sortBy(fieldIndex?: number, isAscending?: boolean): boolean;
+    // (undocumented)
+    sortByMany(specifiers: readonly RevRecordDataServer.SortFieldSpecifier[]): boolean;
+    // (undocumented)
+    get sortColumnCount(): number;
+    // (undocumented)
+    get sortFieldSpecifierCount(): number;
+    // (undocumented)
+    get sortFieldSpecifiers(): readonly RevRecordDataServer.SortFieldSpecifier[];
+    // (undocumented)
+    subscribeDataNotifications(value: DataServer.NotificationsClient): void;
+    // (undocumented)
+    get valueChangedRecentDuration(): number;
+    set valueChangedRecentDuration(value: number);
+}
+
+// @public (undocumented)
+export namespace RevRecordDataServer {
+    // (undocumented)
+    export type RecordFilterCallback = (this: void, record: RevRecord) => boolean;
+    // (undocumented)
+    export interface SortFieldSpecifier {
+        // (undocumented)
+        ascending: boolean;
+        // (undocumented)
+        fieldIndex: RevRecordFieldIndex;
+    }
+    // (undocumented)
+    export type SpecifierComparer = (this: void, left: RevRecordRow, right: RevRecordRow) => number;
+}
+
+// @public (undocumented)
+export interface RevRecordDataStore extends RevRecordStore {
+    getRecord(index: RevRecordIndex): RevRecordData;
+    getRecords(): readonly RevRecordData[];
+    // (undocumented)
+    revRecordData: true;
+}
+
+// @public
+export class RevRecordDateFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => Date);
+}
+
+// @public (undocumented)
+export abstract class RevRecordExternalError extends Error {
+    constructor(code: string, message: string | undefined, baseMessage: string);
+    // (undocumented)
+    readonly code: string;
+}
+
+// @public
+export interface RevRecordField extends SchemaField {
+    compare?(left: RevRecord, right: RevRecord): number;
+    compareDesc?(left: RevRecord, right: RevRecord): number;
+    getEditValue(record: RevRecord): DataServer.EditValue;
+    getViewValue(record: RevRecord): DataServer.ViewValue;
+    // (undocumented)
+    readonly name: string;
+    setEditValue(record: RevRecord, value: DataServer.EditValue): void;
+    valueDependsOnRecordIndex?: boolean;
+    valueDependsOnRowIndex?: boolean;
+}
+
+// @public (undocumented)
+export namespace RevRecordField {
+    // (undocumented)
+    export type Comparer = (this: void, left: RevRecord, right: RevRecord) => number;
+}
+
+// @public
+export type RevRecordFieldIndex = number;
+
+// @public
+export abstract class RevRecordFunctionizeField implements RevRecordField {
+    constructor(name: string, index: number);
+    // (undocumented)
+    compare: (this: void, left: never, right: never) => number;
+    // (undocumented)
+    compareDesc: (this: void, left: never, right: never) => number;
+    // (undocumented)
+    getEditValue(_record: RevRecord): DataServer.EditValue;
+    // (undocumented)
+    getViewValue: (this: void, record: never) => DataServer.ViewValue;
+    // (undocumented)
+    readonly index: number;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    setEditValue(_record: RevRecord, _value: DataServer.EditValue): void;
+}
+
+// @public
+export type RevRecordIndex = number;
+
+// @public (undocumented)
+export interface RevRecordInvalidatedValue {
+    // (undocumented)
+    fieldIndex: RevRecordFieldIndex;
+    // (undocumented)
+    typeId?: RevRecordValueRecentChangeTypeId;
+}
+
+// @public
+export class RevRecordNumericFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => number);
+}
+
+// @public (undocumented)
+export const enum RevRecordRecentChangeTypeId {
+    // (undocumented)
+    Insert = 1,
+    // (undocumented)
+    Remove = 2,
+    // (undocumented)
+    Update = 0
+}
+
+// @public (undocumented)
+export class RevRecordRowError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordSchemaError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordSchemaServer<SF extends RevRecordField> implements SchemaServer<SF> {
+    // (undocumented)
+    addField(field: SF): SF;
+    // (undocumented)
+    addFields(addFields: readonly SF[]): RevRecordFieldIndex;
+    // (undocumented)
+    beginChange(): void;
+    // (undocumented)
+    endChange(): void;
+    // (undocumented)
+    get fieldCount(): number;
+    // @internal (undocumented)
+    fieldListChangedEventer: RevListChangedEventer | undefined;
+    // (undocumented)
+    get fields(): readonly SF[];
+    // (undocumented)
+    getActiveSchemaColumns(): readonly SF[];
+    // (undocumented)
+    getColumnCount(): number;
+    // (undocumented)
+    getField(fieldIndex: RevRecordFieldIndex): SF;
+    // (undocumented)
+    getFieldByName(fieldName: string): SF;
+    // (undocumented)
+    getFieldIndex(field: SF): RevRecordFieldIndex;
+    // (undocumented)
+    getFieldIndexByName(fieldName: string): RevRecordFieldIndex;
+    // (undocumented)
+    getFieldNames(): string[];
+    // (undocumented)
+    getFields(): readonly SF[];
+    // (undocumented)
+    getFieldValueDependsOnRecordIndexFieldIndexes(): readonly RevRecordFieldIndex[];
+    // (undocumented)
+    getFilteredFields(filterCallback: (field: SF) => boolean): SF[];
+    // (undocumented)
+    hasField(name: string): boolean;
+    // (undocumented)
+    reset(): void;
+    // (undocumented)
+    get schema(): readonly SF[];
+    // (undocumented)
+    setFields(fields: readonly SF[]): void;
+    // (undocumented)
+    subscribeSchemaNotifications(value: SchemaServer.NotificationsClient<SF>): void;
+}
+
+// @public
+export class RevRecordSimpleFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => DataServer.ViewValue, compare?: (left: Record, right: Record) => number, compareDesc?: (left: Record, right: Record) => number);
+}
+
+// @public
+export interface RevRecordStore {
+    getRecord(index: RevRecordIndex): RevRecord;
+    getRecords(): readonly RevRecord[];
+    readonly recordCount: number;
+    // (undocumented)
+    setRecordEventers(recordsEventers: RevRecordStore.RecordsEventers): void;
+}
+
+// @public (undocumented)
+export namespace RevRecordStore {
+    // (undocumented)
+    export interface RecordsEventers {
+        // (undocumented)
+        allRecordsDeleted(): void;
+        // (undocumented)
+        beginChange(): void;
+        // (undocumented)
+        endChange(): void;
+        // (undocumented)
+        invalidateAll(): void;
+        // (undocumented)
+        invalidateFields(fieldIndexes: readonly RevRecordFieldIndex[]): void;
+        // (undocumented)
+        invalidateFiltering(): void;
+        // (undocumented)
+        invalidateRecord(recordIndex: RevRecordIndex, recent?: boolean): void;
+        // (undocumented)
+        invalidateRecordAndValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[], recordUpdateRecent?: boolean): void;
+        // (undocumented)
+        invalidateRecordFields(recordIndex: RevRecordIndex, fieldIndex: RevRecordFieldIndex, fieldCount: number): void;
+        // (undocumented)
+        invalidateRecords(recordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+        // (undocumented)
+        invalidateRecordValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[]): void;
+        // (undocumented)
+        invalidateValue(fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex, valueRecentChangeTypeId?: RevRecordValueRecentChangeTypeId): void;
+        // (undocumented)
+        recordDeleted(recordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordInserted(recordIndex: RevRecordIndex, recent?: boolean): void;
+        // (undocumented)
+        recordMoved(fromRecordIndex: RevRecordIndex, toRecordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordReplaced(recordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordsDeleted(recordIndex: number, count: number): void;
+        // (undocumented)
+        recordsInserted(firstInsertedRecordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+        // (undocumented)
+        recordsLoaded(recent?: boolean): void;
+        // (undocumented)
+        recordsMoved(fromRecordIndex: RevRecordIndex, toRecordIndex: RevRecordIndex, moveCount: number): void;
+        // (undocumented)
+        recordsReplaced(recordIndex: RevRecordIndex, count: number): void;
+        // (undocumented)
+        recordsSpliced(recordIndex: RevRecordIndex, deleteCount: number, insertCount: number): void;
+    }
+}
+
+// @public
+export class RevRecordStringFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => string, options?: Intl.CollatorOptions);
+}
+
+// @public (undocumented)
+export namespace RevRecordSysTick {
+    // (undocumented)
+    export function compare(left: Time, right: Time): number;
+    // (undocumented)
+    export function now(): Time;
+    // (undocumented)
+    export type Span = number;
+    // (undocumented)
+    export type Time = number;
+}
+
+// @public (undocumented)
+export class RevRecordUnexpectedUndefinedError extends InternalError {
+    constructor(code: string, message?: string);
+}
+
+// @public (undocumented)
+export class RevRecordUnreachableCaseError extends UnreachableCaseInternalError {
+    constructor(code: string, value: never);
+}
+
+// @public (undocumented)
+export const enum RevRecordValueRecentChangeTypeId {
+    // (undocumented)
+    Decrease = 2,
+    // (undocumented)
+    Increase = 1,
+    // (undocumented)
+    Update = 0
 }
 
 // @public (undocumented)

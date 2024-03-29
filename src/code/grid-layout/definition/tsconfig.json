@@ -3,7 +3,7 @@
 {
   "extends": "../../tsconfig.code.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../../../tsbuildinfo/rev-layout-definition.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../tsbuildinfo/layout-definition.tsbuildinfo"
   },
   "include": [
     "*.ts"

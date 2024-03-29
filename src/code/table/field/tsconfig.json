@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../../tsbuildinfo/rev-table-field.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../tsbuildinfo/table-field.tsbuildinfo"
   },
 
   "include": [

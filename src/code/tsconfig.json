@@ -18,5 +18,6 @@
     { "path": "./grid-layout/tsconfig.json" },
     { "path": "./field/tsconfig.json" },
     { "path": "./render-value/tsconfig.json" },
+    { "path": "./record/tsconfig.json" },
   ]
 }

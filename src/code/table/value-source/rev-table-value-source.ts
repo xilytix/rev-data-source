@@ -4,8 +4,8 @@
  * License: motionite.trade/license/motif
  */
 
-import { RevRecordValueRecentChangeTypeId } from '@xilytix/revgrid';
 import { Integer, } from '@xilytix/sysutils';
+import { RevRecordValueRecentChangeTypeId } from '../../record/internal-api';
 import { RevTableValue } from '../value/internal-api';
 
 /** @public */

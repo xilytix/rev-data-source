@@ -4,13 +4,13 @@
  * License: motionite.trade/license/motif
  */
 
-import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordStore } from '@xilytix/revgrid';
 import {
     AssertInternalError,
     IndexedRecord,
     Integer,
     MultiEvent,
 } from '@xilytix/sysutils';
+import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordStore } from '../record/internal-api';
 import { RevTable } from './rev-table';
 
 /** @public */

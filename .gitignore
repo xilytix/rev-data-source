@@ -13,7 +13,9 @@ trace.log
 /node_modules
 /lib/*
 !/lib/.eslintrc
-/dist
+/dist/
+/test/*/dist/
+/test/*/out-tsc/
 
 npm-debug.log
 debug.log

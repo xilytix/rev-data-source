@@ -3,7 +3,7 @@
 {
   "extends": "../../tsconfig.code.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../../../tsbuildinfo/rev-data-source-definition.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../tsbuildinfo/data-source-definition.tsbuildinfo"
   },
   "include": [
     "*.ts"

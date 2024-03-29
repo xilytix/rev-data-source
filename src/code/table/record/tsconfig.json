@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../../tsbuildinfo/rev-table-record.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../tsbuildinfo/table-record.tsbuildinfo"
   },
 
   "include": [
@@ -15,7 +15,8 @@
   "references": [
     { "path": "../value-source/tsconfig.json" },
     { "path": "../value/tsconfig.json" },
-    { "path": "../../render-value/tsconfig.json" },
     { "path": "../../field/tsconfig.json" },
+    { "path": "../../render-value/tsconfig.json" },
+    { "path": "../../record/tsconfig.json" },
   ]
 }

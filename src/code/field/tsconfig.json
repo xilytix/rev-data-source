@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../tsbuildinfo/rev-field.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/field.tsbuildinfo"
   },
 
   "include": [
@@ -14,5 +14,6 @@
 
   "references": [
     { "path": "../render-value/tsconfig.json" },
+    { "path": "../record/tsconfig.json" },
   ]
 }

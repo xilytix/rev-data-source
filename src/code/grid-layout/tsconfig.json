@@ -7,7 +7,7 @@
 {
   "extends": "../tsconfig.code.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../../tsbuildinfo/rev-layout.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/layout.tsbuildinfo"
   },
   "include": [
     "*.ts"

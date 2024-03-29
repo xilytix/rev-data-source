@@ -4,7 +4,6 @@
  * License: motionite.trade/license/motif
  */
 
-import { RevRecordInvalidatedValue } from '@xilytix/revgrid';
 import {
     CorrectnessState,
     Integer,
@@ -16,6 +15,7 @@ import {
     moveElementsInArray
 } from '@xilytix/sysutils';
 import { RevAllowedField } from '../field/internal-api';
+import { RevRecordInvalidatedValue } from '../record/internal-api';
 import { RevTableField } from './field/internal-api';
 import { RevTableRecordDefinition } from './record-definition/internal-api';
 import { RevTableRecordSource } from './record-source/internal-api';

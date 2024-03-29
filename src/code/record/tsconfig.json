@@ -3,7 +3,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../tsbuildinfo/server-sets-record.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/record.tsbuildinfo"
   },
 
   "include": [

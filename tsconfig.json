@@ -38,8 +38,4 @@
     },
     // "traceResolution": true, // can use this to debug paths
   },
-
-  "include": [
-    "./src/code/**/*.ts"
-  ],
 }

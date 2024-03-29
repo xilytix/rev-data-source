@@ -4,8 +4,8 @@
  * License: motionite.trade/license/motif
  */
 
-import { RevRecordInvalidatedValue } from '@xilytix/revgrid';
 import { ComparableList, Integer } from '@xilytix/sysutils';
+import { RevRecordInvalidatedValue } from '../../record/internal-api';
 import { RevTableValueSource } from '../value-source/internal-api';
 import { RevTableValue, RevTableValuesRecord } from '../value/internal-api';
 

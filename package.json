@@ -28,9 +28,10 @@
     "license.txt"
   ],
   "scripts": {
+    "link-xilytix": "npm link @xilytix/sysutils @xilytix/revgrid",
     "lint": "eslint -c .eslintrc.json --ext .ts src/",
-    "build": "tsc --build ./tsconfig.json",
-    "force-build": "tsc --build --force ./tsconfig.json",
+    "build": "tsc --build ./src/code/tsconfig.json",
+    "force-build": "tsc --build --force ./src/code/tsconfig.json",
     "lib": "tsc --project ./tsconfig.json --emitDeclarationOnly",
     "rollup": "npx api-extractor run --local --verbose",
     "types": "npm run lib && npm run rollup",
@@ -38,7 +39,10 @@
     "force-api": "npm run force-build && npm run rollup",
     "clean": "npx del-cli ./dist/* && npx del-cli ./lib/*",
     "dist": "npm run clean && npm run force-api",
-    "publish": "npm publish --access=public"
+    "publish": "npm publish --access=public",
+    "recordtestapp": "tsc --project ./test/record-test-app/tsconfig.json",
+    "recordtestapp:build": "webpack --mode development --config ./test/record-test-app/webpack.config.js",
+    "recordtestapp:serve": "webpack serve --mode development --config ./test/record-test-app/webpack.config.js"
   },
   "dependencies": {
     "@xilytix/revgrid": "^0.8.0",
@@ -48,10 +52,26 @@
     "@microsoft/api-extractor": "^7.43.0",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
+    "css-loader": "^6.10.0",
     "del-cli": "^5.1.0",
     "eslint": "^8.57.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
-    "typescript": "^5.4.3"
-  }
+    "html-webpack-plugin": "^5.6.0",
+    "source-map-loader": "^5.0.0",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.3",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "browserslist": [
+    "last 1 Chrome version",
+    "last 1 Firefox version",
+    "last 2 Edge major versions",
+    "last 2 Safari major versions",
+    "last 2 iOS major versions",
+    "Firefox ESR"
+  ]
 }

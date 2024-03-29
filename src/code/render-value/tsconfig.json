@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../tsbuildinfo/rev-render-value.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/render-value.tsbuildinfo"
   },
 
   "include": [

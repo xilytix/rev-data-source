@@ -1,11 +1,12 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { DataServer, RevRecordField } from '@xilytix/revgrid';
+import { DataServer } from '@xilytix/revgrid';
 import {
     AssertInternalError,
     IndexedRecord,
     Integer
 } from '@xilytix/sysutils';
+import { RevRecordField } from '../record/internal-api';
 import { RevRenderValue } from '../render-value/internal-api';
 import { RevFieldCustomHeadingsService } from './rev-field-custom-headings-service';
 import { RevFieldDefinition } from './rev-field-definition';
