@@ -45,8 +45,8 @@
     "recordtestapp:serve": "webpack serve --mode development --config ./test/record-test-app/webpack.config.js"
   },
   "dependencies": {
-    "@xilytix/revgrid": "^0.8.0",
-    "@xilytix/sysutils": "^0.0.1"
+    "@xilytix/revgrid": "^0.9.0",
+    "@xilytix/sysutils": "^0.0.3"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.43.0",
