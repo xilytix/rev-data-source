@@ -1,14 +1,14 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, JsonElement } from '@xilytix/sysutils';
-import { RevGridSortDefinition } from '../../grid-layout/internal-api';
-import { RevTableRecordDefinition } from '../../table/internal-api';
+import { RevRecordDefinition } from '../../record/internal-api';
+import { RevGridSortDefinition } from './rev-grid-sort-column-definition';
 
 /** @public */
-export class RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> {
+export class RevGridRowOrderDefinition {
     constructor(
         readonly sortFields: RevGridSortDefinition.Field[] | undefined,
-        readonly recordDefinitions: RevTableRecordDefinition<TableFieldSourceDefinitionTypeId>[] | undefined,
+        readonly recordDefinitions: RevRecordDefinition[] | undefined,
     ) {
         if (recordDefinitions !== undefined) {
             throw new AssertInternalError('GRODC45552'); // currently not supported
@@ -68,8 +68,8 @@ export namespace RevGridRowOrderDefinition {
         element.setElementArray(JsonName.sortFields, sortFieldElements);
     }
 
-    export function createFromJson<TableFieldSourceDefinitionTypeId>(element: JsonElement): RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> {
+    export function createFromJson(element: JsonElement): RevGridRowOrderDefinition {
         const sortFields = tryCreateSortFieldsFromJson(element);
-        return new RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId>(sortFields, undefined);
+        return new RevGridRowOrderDefinition(sortFields, undefined);
     }
 }

@@ -6,11 +6,12 @@ import {
     RevGridLayout,
     RevGridLayoutOrReference,
     RevGridLayoutOrReferenceDefinition,
+    RevGridRowOrderDefinition,
     RevReferenceableGridLayout,
     RevReferenceableGridLayoutsService
 } from "../grid-layout/internal-api";
 import { RevTable, RevTableFieldSourceDefinitionFactory, RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../table/internal-api';
-import { RevDataSourceDefinition, RevGridRowOrderDefinition } from './definition/internal-api';
+import { RevDataSourceDefinition } from './definition/internal-api';
 
 /** @public */
 export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
@@ -33,7 +34,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
 
     private readonly _tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     private _gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined;
-    private _initialRowOrderDefinition: RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> | undefined;
+    private _initialRowOrderDefinition: RevGridRowOrderDefinition | undefined;
 
     private _lockedTableRecordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
     private _lockedGridLayout: RevGridLayout | undefined;
@@ -106,7 +107,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     }
 
     createDefinition(
-        rowOrderDefinition: RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> | undefined
+        rowOrderDefinition: RevGridRowOrderDefinition | undefined
     ): RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         const tableRecordSourceDefinition = this.createTableRecordSourceDefinition();
         const gridLayoutOrReferenceDefinition = this.createGridLayoutOrReferenceDefinition();

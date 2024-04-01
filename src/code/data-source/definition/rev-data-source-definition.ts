@@ -1,16 +1,15 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition } from '../../grid-layout/internal-api';
+import { RevGridLayoutOrReferenceDefinition, RevGridRowOrderDefinition } from '../../grid-layout/internal-api';
 import { RevTableRecordSourceDefinition, RevTableRecordSourceDefinitionFromJsonFactory } from '../../table/internal-api';
-import { RevGridRowOrderDefinition } from './rev-grid-row-order-definition';
 
 /** @public */
 export class RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
     constructor(
         public readonly tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         public gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined,
-        public rowOrderDefinition: RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> | undefined,
+        public rowOrderDefinition: RevGridRowOrderDefinition | undefined,
     ) {
     }
 
@@ -150,7 +149,7 @@ export namespace RevDataSourceDefinition {
         }
     }
 
-    export function tryGetRowOrderFromJson<TableFieldSourceDefinitionTypeId>(element: JsonElement): RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> | undefined {
+    export function tryGetRowOrderFromJson(element: JsonElement): RevGridRowOrderDefinition | undefined {
         const rowOrderDefinitionElementResult = element.tryGetElement(JsonName.rowOrder);
         if (rowOrderDefinitionElementResult.isErr()) {
             return undefined;
@@ -193,7 +192,7 @@ export namespace RevDataSourceDefinition {
                 layoutCreateFromJsonErrorId = undefined;
             }
 
-            const rowOrderDefinition = tryGetRowOrderFromJson<TableFieldSourceDefinitionTypeId>(element);
+            const rowOrderDefinition = tryGetRowOrderFromJson(element);
 
             const definition = new RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
                 tableRecordSourceDefinition,

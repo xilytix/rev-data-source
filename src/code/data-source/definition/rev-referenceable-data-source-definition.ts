@@ -1,13 +1,12 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition } from '../../grid-layout/internal-api';
+import { RevGridLayoutOrReferenceDefinition, RevGridRowOrderDefinition } from '../../grid-layout/internal-api';
 import {
     RevTableRecordSourceDefinition,
     RevTableRecordSourceDefinitionFromJsonFactory
 } from "../../table/record-source/internal-api";
 import { RevDataSourceDefinition } from './rev-data-source-definition';
-import { RevGridRowOrderDefinition } from './rev-grid-row-order-definition';
 
 /** @public */
 export class RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
@@ -18,7 +17,7 @@ export class RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTyp
         readonly name: string,
         tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         gridLayoutDefinitionOrReference: RevGridLayoutOrReferenceDefinition | undefined,
-        rowOrderDefinition: RevGridRowOrderDefinition<TableFieldSourceDefinitionTypeId> | undefined,
+        rowOrderDefinition: RevGridRowOrderDefinition | undefined,
     ) {
         super(tableRecordSourceDefinition, gridLayoutDefinitionOrReference, rowOrderDefinition);
     }
@@ -128,7 +127,7 @@ export namespace RevReferenceableDataSourceDefinition {
                         gridLayoutOrReferenceDefinition = gridLayoutDefinitionOrReferenceDefinitionResult.value;
                     }
 
-                    const rowOrderDefinition = RevDataSourceDefinition.tryGetRowOrderFromJson<TableFieldSourceDefinitionTypeId>(element);
+                    const rowOrderDefinition = RevDataSourceDefinition.tryGetRowOrderFromJson(element);
 
                     const definition = new RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
                         idResult.value,
