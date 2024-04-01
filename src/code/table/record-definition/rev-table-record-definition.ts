@@ -1,11 +1,10 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { MapKey } from '@xilytix/sysutils';
+import { RevRecordDefinition } from '../../record/internal-api';
 
 /** @public */
-export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> {
+export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> extends RevRecordDefinition {
     readonly typeId: TableFieldSourceDefinitionTypeId;
-    readonly mapKey: MapKey;
 }
 
 /** @public */

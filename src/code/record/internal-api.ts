@@ -1,5 +1,6 @@
 export { RevRecord, RevRecordData } from './rev-record';
 export { RevRecordDataServer } from './rev-record-data-server';
+export { RevRecordDefinition } from './rev-record-definition';
 export * from './rev-record-error';
 export { RevRecordField } from './rev-record-field';
 export * from './rev-record-functionize-field';

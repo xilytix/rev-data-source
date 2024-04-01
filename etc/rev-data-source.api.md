@@ -1086,6 +1086,12 @@ export class RevRecordDateFunctionizeField<Record> extends RevRecordFunctionizeF
 }
 
 // @public (undocumented)
+export interface RevRecordDefinition {
+    // (undocumented)
+    readonly mapKey: MapKey;
+}
+
+// @public (undocumented)
 export abstract class RevRecordExternalError extends Error {
     constructor(code: string, message: string | undefined, baseMessage: string);
     // (undocumented)
@@ -1842,9 +1848,7 @@ export namespace RevTableRecord {
 }
 
 // @public (undocumented)
-export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> {
-    // (undocumented)
-    readonly mapKey: MapKey;
+export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> extends RevRecordDefinition {
     // (undocumented)
     readonly typeId: TableFieldSourceDefinitionTypeId;
 }
