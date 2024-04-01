@@ -8,6 +8,7 @@ import { CorrectnessState } from '@xilytix/sysutils';
 import { DataServer } from '@xilytix/revgrid';
 import { Guid } from '@xilytix/sysutils';
 import { HorizontalAlign } from '@xilytix/revgrid';
+import { HorizontalAlignEnum } from '@xilytix/revgrid';
 import { IndexedRecord } from '@xilytix/sysutils';
 import { Integer } from '@xilytix/sysutils';
 import { InternalError } from '@xilytix/sysutils';
@@ -365,6 +366,34 @@ export abstract class RevField<RenderValueTypeId, RenderAttributeTypeId> impleme
 
 // @public (undocumented)
 export namespace RevField {
+    // (undocumented)
+    export namespace Field {
+        // (undocumented)
+        export type Id = FieldId;
+        const // (undocumented)
+        idCount: number;
+        // (undocumented)
+        export function idToHorizontalAlign(id: Id): HorizontalAlignEnum;
+        // (undocumented)
+        export function idToName(id: Id): string;
+        // (undocumented)
+        export function initialise(): void;
+    }
+    // (undocumented)
+    export const enum FieldId {
+        // (undocumented)
+        DefaultHeading = 3,
+        // (undocumented)
+        DefaultTextAlign = 4,
+        // (undocumented)
+        DefaultWidth = 5,
+        // (undocumented)
+        Heading = 1,
+        // (undocumented)
+        Name = 0,
+        // (undocumented)
+        SourceName = 2
+    }
     // (undocumented)
     export function generateHeading(customHeadingsService: RevFieldCustomHeadingsService, fieldDefinition: RevFieldDefinition): string;
     // (undocumented)
