@@ -369,15 +369,15 @@ export namespace RevField {
     // (undocumented)
     export namespace Field {
         // (undocumented)
-        export type Id = FieldId;
+        export function checkOrder(): void;
         const // (undocumented)
         idCount: number;
+        // (undocumented)
+        export type Id = FieldId;
         // (undocumented)
         export function idToHorizontalAlign(id: Id): HorizontalAlignEnum;
         // (undocumented)
         export function idToName(id: Id): string;
-        // (undocumented)
-        export function initialise(): void;
     }
     // (undocumented)
     export const enum FieldId {

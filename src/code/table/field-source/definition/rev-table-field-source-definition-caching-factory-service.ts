@@ -1,8 +1,4 @@
-/**
- * %license Motif
- * (c) 2021 Paritech Wealth Technology
- * License: motionite.trade/license/motif
- */
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { RevGridLayoutDefinition } from '../../../grid-layout/internal-api';
 // import { BalancesTableFieldSourceDefinition } from './balances-table-field-source-definition';

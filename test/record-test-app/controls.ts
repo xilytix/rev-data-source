@@ -455,7 +455,7 @@ export class Controls {
         // no code needed
     }
 
-    private handleGridResized(/*event: MotifGrid.ResizedEventDetail*/): void {
+    private handleGridResized(): void {
         this._activeWidthSpanElement.textContent = this._grid.calculateActiveColumnsWidth().toString();
     }
 

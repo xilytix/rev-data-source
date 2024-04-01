@@ -1,13 +1,9 @@
-/**
- * %license Motif
- * (c) 2021 Paritech Wealth Technology
- * License: motionite.trade/license/motif
- */
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { LockItemByKeyList } from '@xilytix/sysutils';
 import { RevReferenceableDataSourceDefinition } from './definition/internal-api';
-import { RevReferenceableDataSource } from './rev-referenceable-data-source';
 import { RevDataSource } from './rev-data-source';
+import { RevReferenceableDataSource } from './rev-referenceable-data-source';
 
 /** @public */
 export interface RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
