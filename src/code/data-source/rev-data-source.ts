@@ -1,15 +1,15 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, IndexedRecord, LockOpenListItem, LockOpenManager, MapKey, MultiEvent, Ok, Result, UnreachableCaseError, newGuid } from '@xilytix/sysutils';
-import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import {
     RevGridLayout,
     RevGridLayoutOrReference,
     RevGridLayoutOrReferenceDefinition,
-    RevGridRowOrderDefinition,
+    RevRecordRowOrderDefinition,
     RevReferenceableGridLayout,
     RevReferenceableGridLayoutsService
 } from "../grid-layout/internal-api";
+import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import { RevTable, RevTableFieldSourceDefinitionFactory, RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition } from './definition/internal-api';
 
@@ -34,7 +34,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
 
     private readonly _tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     private _gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined;
-    private _initialRowOrderDefinition: RevGridRowOrderDefinition | undefined;
+    private _initialRowOrderDefinition: RevRecordRowOrderDefinition | undefined;
 
     private _lockedTableRecordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
     private _lockedGridLayout: RevGridLayout | undefined;
@@ -107,7 +107,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     }
 
     createDefinition(
-        rowOrderDefinition: RevGridRowOrderDefinition | undefined
+        rowOrderDefinition: RevRecordRowOrderDefinition | undefined
     ): RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         const tableRecordSourceDefinition = this.createTableRecordSourceDefinition();
         const gridLayoutOrReferenceDefinition = this.createGridLayoutOrReferenceDefinition();

@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, LockOpenListItem, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridRowOrderDefinition, RevReferenceableGridLayoutsService } from '../grid-layout/internal-api';
+import { RevRecordRowOrderDefinition, RevReferenceableGridLayoutsService } from '../grid-layout/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition, RevDataSourceOrReferenceDefinition } from './definition/internal-api';
 import { RevDataSource } from './rev-data-source';
@@ -37,7 +37,7 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
     get lockedDataSource() { return this._lockedDataSource;}
     get lockedReferenceableDataSource() { return this._lockedReferenceableDataSource;}
 
-    createDefinition(rowOrderDefinition: RevGridRowOrderDefinition | undefined) {
+    createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition | undefined) {
         if (this._lockedReferenceableDataSource !== undefined) {
             return new RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(this._lockedReferenceableDataSource.id);
         } else {

@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition, RevGridRowOrderDefinition } from '../../grid-layout/internal-api';
+import { RevGridLayoutOrReferenceDefinition, RevRecordRowOrderDefinition } from '../../grid-layout/internal-api';
 import { RevTableRecordSourceDefinition, RevTableRecordSourceDefinitionFromJsonFactory } from '../../table/internal-api';
 
 /** @public */
@@ -9,7 +9,7 @@ export class RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFie
     constructor(
         public readonly tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         public gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined,
-        public rowOrderDefinition: RevGridRowOrderDefinition | undefined,
+        public rowOrderDefinition: RevRecordRowOrderDefinition | undefined,
     ) {
     }
 
@@ -149,13 +149,13 @@ export namespace RevDataSourceDefinition {
         }
     }
 
-    export function tryGetRowOrderFromJson(element: JsonElement): RevGridRowOrderDefinition | undefined {
+    export function tryGetRowOrderFromJson(element: JsonElement): RevRecordRowOrderDefinition | undefined {
         const rowOrderDefinitionElementResult = element.tryGetElement(JsonName.rowOrder);
         if (rowOrderDefinitionElementResult.isErr()) {
             return undefined;
         } else {
             const rowOrderDefinitionElement = rowOrderDefinitionElementResult.value;
-            return RevGridRowOrderDefinition.createFromJson(rowOrderDefinitionElement);
+            return RevRecordRowOrderDefinition.createFromJson(rowOrderDefinitionElement);
         }
     }
 

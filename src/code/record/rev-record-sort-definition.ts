@@ -2,8 +2,10 @@
 
 import { JsonElement } from '@xilytix/sysutils';
 
+// export type RevRecordSortDefinition = RevRecordSortDefinition.Field[];
+
 /** @public */
-export namespace RevGridSortDefinition {
+export namespace RevRecordSortDefinition {
     export interface Field {
         name: string;
         ascending: boolean;

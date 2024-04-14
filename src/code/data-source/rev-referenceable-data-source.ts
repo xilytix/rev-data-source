@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { IndexedRecord, LockOpenListItem } from '@xilytix/sysutils';
-import { RevGridRowOrderDefinition, RevReferenceableGridLayoutsService } from '../grid-layout/internal-api';
+import { RevRecordRowOrderDefinition, RevReferenceableGridLayoutsService } from '../grid-layout/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevReferenceableDataSourceDefinition } from './definition/internal-api';
 import { RevDataSource } from './rev-data-source';
@@ -34,7 +34,7 @@ export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, Table
     }
 
     override createDefinition(
-        rowOrderDefinition: RevGridRowOrderDefinition
+        rowOrderDefinition: RevRecordRowOrderDefinition
     ): RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         const tableRecordSourceDefinition = this.createTableRecordSourceDefinition();
         const gridLayoutOrReferenceDefinition = this.createGridLayoutOrReferenceDefinition();

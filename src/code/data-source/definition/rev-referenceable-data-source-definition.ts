@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition, RevGridRowOrderDefinition } from '../../grid-layout/internal-api';
+import { RevGridLayoutOrReferenceDefinition, RevRecordRowOrderDefinition } from '../../grid-layout/internal-api';
 import {
     RevTableRecordSourceDefinition,
     RevTableRecordSourceDefinitionFromJsonFactory
@@ -17,7 +17,7 @@ export class RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTyp
         readonly name: string,
         tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         gridLayoutDefinitionOrReference: RevGridLayoutOrReferenceDefinition | undefined,
-        rowOrderDefinition: RevGridRowOrderDefinition | undefined,
+        rowOrderDefinition: RevRecordRowOrderDefinition | undefined,
     ) {
         super(tableRecordSourceDefinition, gridLayoutDefinitionOrReference, rowOrderDefinition);
     }

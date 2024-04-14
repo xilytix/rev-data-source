@@ -47,7 +47,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     // (undocumented)
     closeLocked(opener: LockOpenListItem.Opener): void;
     // (undocumented)
-    createDefinition(rowOrderDefinition: RevGridRowOrderDefinition | undefined): RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition | undefined): RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     createGridLayoutOrReferenceDefinition(): RevGridLayoutOrReferenceDefinition;
     // (undocumented)
@@ -59,7 +59,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     // (undocumented)
     index: number;
     // (undocumented)
-    get initialRowOrderDefinition(): RevGridRowOrderDefinition | undefined;
+    get initialRowOrderDefinition(): RevRecordRowOrderDefinition | undefined;
     // (undocumented)
     isLocked(ignoreOnlyLocker: LockOpenListItem.Locker | undefined): boolean;
     // (undocumented)
@@ -131,11 +131,11 @@ export namespace RevDataSource {
 
 // @public (undocumented)
 export class RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
-    constructor(tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined, rowOrderDefinition: RevGridRowOrderDefinition | undefined);
+    constructor(tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined, rowOrderDefinition: RevRecordRowOrderDefinition | undefined);
     // (undocumented)
     gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined;
     // (undocumented)
-    rowOrderDefinition: RevGridRowOrderDefinition | undefined;
+    rowOrderDefinition: RevRecordRowOrderDefinition | undefined;
     // (undocumented)
     saveToJson(element: JsonElement): void;
     // (undocumented)
@@ -197,7 +197,7 @@ export namespace RevDataSourceDefinition {
     // (undocumented)
     export function tryCreateTableRecordSourceDefinitionFromJson<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(tableRecordSourceDefinitionFromJsonFactory: RevTableRecordSourceDefinitionFromJsonFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, element: JsonElement): Result<RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, CreateFromJsonErrorIdPlusExtra>;
     // (undocumented)
-    export function tryGetRowOrderFromJson(element: JsonElement): RevGridRowOrderDefinition | undefined;
+    export function tryGetRowOrderFromJson(element: JsonElement): RevRecordRowOrderDefinition | undefined;
     // (undocumented)
     export interface WithLayoutError<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         // (undocumented)
@@ -211,7 +211,7 @@ export namespace RevDataSourceDefinition {
 export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
     constructor(_referenceableGridLayoutsService: RevReferenceableGridLayoutsService, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, _referenceableDataSourcesService: RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, definition: RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>);
     // (undocumented)
-    createDefinition(rowOrderDefinition: RevGridRowOrderDefinition | undefined): RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition | undefined): RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     get lockedDataSource(): RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
     // (undocumented)
@@ -710,50 +710,6 @@ export namespace RevGridLayoutOrReferenceDefinition {
 }
 
 // @public (undocumented)
-export class RevGridRowOrderDefinition {
-    constructor(sortFields: RevGridSortDefinition.Field[] | undefined, recordDefinitions: RevRecordDefinition[] | undefined);
-    // (undocumented)
-    readonly recordDefinitions: RevRecordDefinition[] | undefined;
-    // (undocumented)
-    saveToJson(element: JsonElement): void;
-    // (undocumented)
-    readonly sortFields: RevGridSortDefinition.Field[] | undefined;
-}
-
-// @public (undocumented)
-export namespace RevGridRowOrderDefinition {
-    // (undocumented)
-    export function createFromJson(element: JsonElement): RevGridRowOrderDefinition;
-    // (undocumented)
-    export namespace JsonName {
-        const // (undocumented)
-        sortFields = "revSortFields";
-    }
-    // (undocumented)
-    export function saveSortFieldsToJson(sortFields: RevGridSortDefinition.Field[], element: JsonElement): void;
-    // (undocumented)
-    export function tryCreateSortFieldsFromJson(element: JsonElement): RevGridSortDefinition.Field[] | undefined;
-}
-
-// @public (undocumented)
-export namespace RevGridSortDefinition {
-    // (undocumented)
-    export interface Field {
-        // (undocumented)
-        ascending: boolean;
-        // (undocumented)
-        name: string;
-    }
-    // (undocumented)
-    export namespace Field {
-        // (undocumented)
-        export function saveToJson(definition: Field, element: JsonElement): void;
-        // (undocumented)
-        export function tryCreateFromJson(element: JsonElement): Field | undefined;
-    }
-}
-
-// @public (undocumented)
 export interface RevRecord {
     // (undocumented)
     __rows?: RevRecord.BoundRows;
@@ -1043,6 +999,32 @@ export class RevRecordRowError extends RevRecordExternalError {
 }
 
 // @public (undocumented)
+export class RevRecordRowOrderDefinition {
+    constructor(sortFields: RevRecordSortDefinition.Field[] | undefined, recordDefinitions: RevRecordDefinition[] | undefined);
+    // (undocumented)
+    readonly recordDefinitions: RevRecordDefinition[] | undefined;
+    // (undocumented)
+    saveToJson(element: JsonElement): void;
+    // (undocumented)
+    readonly sortFields: RevRecordSortDefinition.Field[] | undefined;
+}
+
+// @public (undocumented)
+export namespace RevRecordRowOrderDefinition {
+    // (undocumented)
+    export function createFromJson(element: JsonElement): RevRecordRowOrderDefinition;
+    // (undocumented)
+    export namespace JsonName {
+        const // (undocumented)
+        sortFields = "revSortFields";
+    }
+    // (undocumented)
+    export function saveSortFieldsToJson(sortFields: RevRecordSortDefinition.Field[], element: JsonElement): void;
+    // (undocumented)
+    export function tryCreateSortFieldsFromJson(element: JsonElement): RevRecordSortDefinition.Field[] | undefined;
+}
+
+// @public (undocumented)
 export class RevRecordSchemaError extends RevRecordExternalError {
     constructor(code: string, message: string);
 }
@@ -1098,6 +1080,24 @@ export class RevRecordSchemaServer<SF extends RevRecordField> implements SchemaS
 // @public
 export class RevRecordSimpleFunctionizeField<Record> extends RevRecordFunctionizeField {
     constructor(name: string, index: number, value: (record: Record) => DataServer.ViewValue, compare?: (left: Record, right: Record) => number, compareDesc?: (left: Record, right: Record) => number);
+}
+
+// @public (undocumented)
+export namespace RevRecordSortDefinition {
+    // (undocumented)
+    export interface Field {
+        // (undocumented)
+        ascending: boolean;
+        // (undocumented)
+        name: string;
+    }
+    // (undocumented)
+    export namespace Field {
+        // (undocumented)
+        export function saveToJson(definition: Field, element: JsonElement): void;
+        // (undocumented)
+        export function tryCreateFromJson(element: JsonElement): Field | undefined;
+    }
 }
 
 // @public
@@ -1201,7 +1201,7 @@ export const enum RevRecordValueRecentChangeTypeId {
 export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> extends RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements LockOpenListItem<RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
     constructor(referenceableGridLayoutsService: RevReferenceableGridLayoutsService, tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, lockedDefinition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, index: number);
     // (undocumented)
-    createDefinition(rowOrderDefinition: RevGridRowOrderDefinition): RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition): RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     readonly name: string;
     // (undocumented)
@@ -1210,7 +1210,7 @@ export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, Table
 
 // @public (undocumented)
 export class RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
-    constructor(id: Guid, name: string, tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, gridLayoutDefinitionOrReference: RevGridLayoutOrReferenceDefinition | undefined, rowOrderDefinition: RevGridRowOrderDefinition | undefined);
+    constructor(id: Guid, name: string, tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, gridLayoutDefinitionOrReference: RevGridLayoutOrReferenceDefinition | undefined, rowOrderDefinition: RevRecordRowOrderDefinition | undefined);
     // (undocumented)
     readonly id: Guid;
     // (undocumented)

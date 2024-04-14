@@ -1,13 +1,13 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, JsonElement } from '@xilytix/sysutils';
-import { RevRecordDefinition } from '../../record/internal-api';
-import { RevGridSortDefinition } from './rev-grid-sort-column-definition';
+import { RevRecordDefinition } from './internal-api';
+import { RevRecordSortDefinition } from './rev-record-sort-definition';
 
 /** @public */
-export class RevGridRowOrderDefinition {
+export class RevRecordRowOrderDefinition {
     constructor(
-        readonly sortFields: RevGridSortDefinition.Field[] | undefined,
+        readonly sortFields: RevRecordSortDefinition.Field[] | undefined,
         readonly recordDefinitions: RevRecordDefinition[] | undefined,
     ) {
         if (recordDefinitions !== undefined) {
@@ -17,29 +17,29 @@ export class RevGridRowOrderDefinition {
 
     saveToJson(element: JsonElement) {
         if (this.sortFields !== undefined) {
-            RevGridRowOrderDefinition.saveSortFieldsToJson(this.sortFields, element);
+            RevRecordRowOrderDefinition.saveSortFieldsToJson(this.sortFields, element);
         }
     }
 }
 
 /** @public */
-export namespace RevGridRowOrderDefinition {
+export namespace RevRecordRowOrderDefinition {
     export namespace JsonName {
         export const sortFields = 'revSortFields';
     }
 
-    export function tryCreateSortFieldsFromJson(element: JsonElement): RevGridSortDefinition.Field[] | undefined {
+    export function tryCreateSortFieldsFromJson(element: JsonElement): RevRecordSortDefinition.Field[] | undefined {
         const sortFieldElementsResult = element.tryGetElementArray(JsonName.sortFields);
         if (sortFieldElementsResult.isErr()) {
             return undefined;
         } else {
             const sortFieldElements = sortFieldElementsResult.value;
             const maxCount = sortFieldElements.length;
-            const sortFields = new Array<RevGridSortDefinition.Field>(maxCount);
+            const sortFields = new Array<RevRecordSortDefinition.Field>(maxCount);
             let count = 0;
             for (let i = 0; i < maxCount; i++) {
                 const sortFieldElement = sortFieldElements[i];
-                const sortField = RevGridSortDefinition.Field.tryCreateFromJson(sortFieldElement);
+                const sortField = RevRecordSortDefinition.Field.tryCreateFromJson(sortFieldElement);
                 if (sortField === undefined) {
                     break;
                 } else {
@@ -56,20 +56,20 @@ export namespace RevGridRowOrderDefinition {
         }
     }
 
-    export function saveSortFieldsToJson(sortFields: RevGridSortDefinition.Field[], element: JsonElement) {
+    export function saveSortFieldsToJson(sortFields: RevRecordSortDefinition.Field[], element: JsonElement) {
         const count = sortFields.length;
         const sortFieldElements = new Array<JsonElement>(count);
         for (let i = 0; i < count; i++) {
             const sortField = sortFields[i];
             const sortFieldElement = new JsonElement();
-            RevGridSortDefinition.Field.saveToJson(sortField, sortFieldElement);
+            RevRecordSortDefinition.Field.saveToJson(sortField, sortFieldElement);
             sortFieldElements[i] = sortFieldElement;
         }
         element.setElementArray(JsonName.sortFields, sortFieldElements);
     }
 
-    export function createFromJson(element: JsonElement): RevGridRowOrderDefinition {
+    export function createFromJson(element: JsonElement): RevRecordRowOrderDefinition {
         const sortFields = tryCreateSortFieldsFromJson(element);
-        return new RevGridRowOrderDefinition(sortFields, undefined);
+        return new RevRecordRowOrderDefinition(sortFields, undefined);
     }
 }
