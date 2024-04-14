@@ -2,12 +2,12 @@
 
 import { Integer } from '@xilytix/sysutils';
 // import { GridRecordFieldState } from '../../../record/grid-record-internal-api';
-import { RevFieldDefinition, RevFieldSourceDefinition } from '../../../field/internal-api';
+import { RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../../sourced-field/internal-api';
 import { RevTableField } from '../../field/internal-api';
 import { RevTableValue } from '../../value/internal-api';
 
 /** @public */
-export abstract class RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevFieldSourceDefinition {
+export abstract class RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedFieldSourceDefinition {
     readonly fieldDefinitions: RevTableField.Definition<RenderValueTypeId, RenderAttributeTypeId>[];
 
     constructor(readonly typeId: TypeId, name: string) {
@@ -27,7 +27,7 @@ export abstract class RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, R
     }
 
     encodeFieldName(sourcelessFieldName: string) {
-        return RevFieldDefinition.Name.compose(this.name, sourcelessFieldName);
+        return RevSourcedFieldDefinition.Name.compose(this.name, sourcelessFieldName);
     }
 
     abstract getFieldNameById(id: number): string;

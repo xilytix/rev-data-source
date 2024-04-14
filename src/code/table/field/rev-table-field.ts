@@ -5,12 +5,12 @@ import {
     Integer,
     compareValue
 } from '@xilytix/sysutils';
-import { RevField, RevFieldDefinition, RevFieldSourceDefinition } from '../../field/internal-api';
 import { RevRenderValue } from '../../render-value/internal-api';
+import { RevSourcedField, RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../sourced-field/internal-api';
 import { RevGenericTableValue, RevTableValue, RevTableValuesRecord } from '../value/internal-api';
 
 /** @public */
-export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> extends RevField<RenderValueTypeId, RenderAttributeTypeId> {
+export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
     private _valueTypeId: RenderValueTypeId;
 
     constructor(
@@ -86,9 +86,9 @@ export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> ex
 
 /** @public */
 export namespace RevTableField {
-    export class Definition<RenderValueTypeId, RenderAttributeTypeId> extends RevFieldDefinition {
+    export class Definition<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedFieldDefinition {
         constructor(
-            source: RevFieldSourceDefinition,
+            sourceDefinition: RevSourcedFieldSourceDefinition,
             sourcelessName: string,
             defaultHeading: string,
             defaultTextAlign: HorizontalAlign,
@@ -96,7 +96,7 @@ export namespace RevTableField {
             readonly gridValueConstructor: RevTableValue.Constructor<RenderValueTypeId, RenderAttributeTypeId>,
 
         ) {
-            super(source, sourcelessName, defaultHeading, defaultTextAlign);
+            super(sourceDefinition, sourcelessName, defaultHeading, defaultTextAlign);
         }
     }
 

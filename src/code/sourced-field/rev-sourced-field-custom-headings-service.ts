@@ -3,7 +3,7 @@
 import { JsonElement } from '@xilytix/sysutils';
 
 /** @public */
-export class RevFieldCustomHeadingsService {
+export class RevSourcedFieldCustomHeadingsService {
     // private cachedHeadingIniFile: TMemIniFile;
     // private headingIniFileCachingEnabled: boolean;
     private saveRequired = false;

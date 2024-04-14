@@ -9,19 +9,19 @@ import {
 } from '@xilytix/sysutils';
 import { RevRecordField } from '../record/internal-api';
 import { RevRenderValue } from '../render-value/internal-api';
-import { RevFieldCustomHeadingsService } from './rev-field-custom-headings-service';
-import { RevFieldDefinition } from './rev-field-definition';
+import { RevSourcedFieldCustomHeadingsService } from './rev-sourced-field-custom-headings-service';
+import { RevSourcedFieldDefinition } from './rev-sourced-field-definition';
 
 /** @public */
-export abstract class RevField<RenderValueTypeId, RenderAttributeTypeId> implements RevRecordField {
+export abstract class RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> implements RevRecordField {
     readonly name: string;
     index: Integer;
     heading: string;
 
-    getEditValueEventer: RevField.GetEditValueEventer | undefined;
-    setEditValueEventer: RevField.SetEditValueEventer | undefined;
+    getEditValueEventer: RevSourcedField.GetEditValueEventer | undefined;
+    setEditValueEventer: RevSourcedField.SetEditValueEventer | undefined;
 
-    constructor(readonly definition: RevFieldDefinition, heading?: string) {
+    constructor(readonly definition: RevSourcedFieldDefinition, heading?: string) {
         this.name = definition.name;
         this.heading = heading ?? definition.defaultHeading;
     }
@@ -46,7 +46,7 @@ export abstract class RevField<RenderValueTypeId, RenderAttributeTypeId> impleme
 }
 
 /** @public */
-export namespace RevField {
+export namespace RevSourcedField {
     export type GetEditValueEventer = (this: void, record: IndexedRecord) => DataServer.EditValue;
     export type SetEditValueEventer = (this: void, record: IndexedRecord, value: DataServer.EditValue) => void;
 
@@ -126,7 +126,7 @@ export namespace RevField {
         }
     }
 
-    export function generateHeading(customHeadingsService: RevFieldCustomHeadingsService, fieldDefinition: RevFieldDefinition) {
+    export function generateHeading(customHeadingsService: RevSourcedFieldCustomHeadingsService, fieldDefinition: RevSourcedFieldDefinition) {
         const customHeading = customHeadingsService.tryGetFieldHeading(fieldDefinition.name, fieldDefinition.sourcelessName);
         if (customHeading !== undefined) {
             return customHeading;

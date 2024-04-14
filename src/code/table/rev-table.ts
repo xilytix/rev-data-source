@@ -10,7 +10,7 @@ import {
     UsableListChangeTypeId,
     moveElementsInArray
 } from '@xilytix/sysutils';
-import { RevAllowedField } from '../field/internal-api';
+import { RevAllowedSourcedField } from '../sourced-field/internal-api';
 import { RevRecordInvalidatedValue } from '../record/internal-api';
 import { RevTableField } from './field/internal-api';
 import { RevTableRecordDefinition } from './record-definition/internal-api';
@@ -91,7 +91,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
         }
     }
 
-    createAllowedFields(): readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[] {
+    createAllowedFields(): readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[] {
         return this.recordSource.createAllowedFields();
     }
 

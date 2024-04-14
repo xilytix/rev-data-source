@@ -1,8 +1,8 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Integer } from '@xilytix/sysutils';
-import { RevField, RevFieldCustomHeadingsService } from '../../field/internal-api';
 import { RevRenderValue } from '../../render-value/internal-api';
+import { RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../sourced-field/internal-api';
 import { RevTableField } from '../field/internal-api';
 import { RevTableFieldSourceDefinition } from './definition/internal-api';
 
@@ -13,7 +13,7 @@ export class RevTableFieldSource<TypeId, RenderValueTypeId, RenderAttributeTypeI
 
     constructor(
         private readonly _textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>,
-        private readonly _customHeadingsService: RevFieldCustomHeadingsService,
+        private readonly _customHeadingsService: RevSourcedFieldCustomHeadingsService,
         public readonly definition: RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId>,
         private _headingPrefix: string // This might be for call/put
     ) { }
@@ -28,7 +28,7 @@ export class RevTableFieldSource<TypeId, RenderValueTypeId, RenderAttributeTypeI
         const result = new Array<RevTableField<RenderValueTypeId, RenderAttributeTypeId>>(fieldCount);
         for (let i = 0; i < fieldCount; i++) {
             const fieldDefinition = fieldDefinitions[i];
-            const heading = RevField.generateHeading(this._customHeadingsService, fieldDefinition);
+            const heading = RevSourcedField.generateHeading(this._customHeadingsService, fieldDefinition);
 
             result[i] = new fieldDefinition.gridFieldConstructor(
                 this._textFormatter,

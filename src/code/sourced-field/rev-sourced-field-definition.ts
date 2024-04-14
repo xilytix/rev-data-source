@@ -2,25 +2,25 @@
 
 import { HorizontalAlign } from '@xilytix/revgrid';
 import { CommaText, Err, Integer, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevFieldSourceDefinition } from './rev-field-source-definition';
+import { RevSourcedFieldSourceDefinition } from './rev-sourced-field-source-definition';
 
 /** @public */
-export class RevFieldDefinition {
+export class RevSourcedFieldDefinition {
     readonly name: string;
 
     constructor(
-        readonly source: RevFieldSourceDefinition,
+        readonly sourceDefinition: RevSourcedFieldSourceDefinition,
         readonly sourcelessName: string,
         readonly defaultHeading: string,
         readonly defaultTextAlign: HorizontalAlign,
         readonly defaultWidth?: Integer,
     ) {
-        this.name = RevFieldDefinition.Name.compose(source.name, sourcelessName);
+        this.name = RevSourcedFieldDefinition.Name.compose(sourceDefinition.name, sourcelessName);
     }
 }
 
 /** @public */
-export namespace RevFieldDefinition {
+export namespace RevSourcedFieldDefinition {
     export namespace Name {
         export function compose(sourceName: string, sourcelessName: string) {
             if (sourceName === '') {

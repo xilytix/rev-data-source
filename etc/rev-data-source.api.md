@@ -27,18 +27,18 @@ import { UnreachableCaseInternalError } from '@xilytix/sysutils';
 import { UsableListChangeTypeId } from '@xilytix/sysutils';
 
 // @public (undocumented)
-export class RevAllowedField<RenderValueTypeId, RenderAttributeTypeId> extends RevField<RenderValueTypeId, RenderAttributeTypeId> {
+export class RevAllowedFieldsGridLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId> extends RevGridLayoutDefinition {
+    constructor(columns: readonly RevGridLayoutDefinition.Column[], allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[], fixedColumnCount: Integer);
     // (undocumented)
-    getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
+    readonly allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
+    // (undocumented)
+    readonly fixedColumnCount: Integer;
 }
 
 // @public (undocumented)
-export class RevAllowedFieldsGridLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId> extends RevGridLayoutDefinition {
-    constructor(columns: readonly RevGridLayoutDefinition.Column[], allowedFields: readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[], fixedColumnCount: Integer);
+export class RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
     // (undocumented)
-    readonly allowedFields: readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[];
-    // (undocumented)
-    readonly fixedColumnCount: Integer;
+    getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
 }
 
 // @public (undocumented)
@@ -339,134 +339,6 @@ export class RevFavouriteReferenceableGridLayoutDefinition implements IndexedRec
 export class RevFavouriteReferenceableGridLayoutDefinitionsStoreService {
     // (undocumented)
     name: string;
-}
-
-// @public (undocumented)
-export abstract class RevField<RenderValueTypeId, RenderAttributeTypeId> implements RevRecordField {
-    constructor(definition: RevFieldDefinition, heading?: string);
-    // (undocumented)
-    readonly definition: RevFieldDefinition;
-    // (undocumented)
-    getEditValue(record: IndexedRecord): DataServer.EditValue;
-    // (undocumented)
-    getEditValueEventer: RevField.GetEditValueEventer | undefined;
-    // (undocumented)
-    abstract getViewValue(record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
-    // (undocumented)
-    heading: string;
-    // (undocumented)
-    index: Integer;
-    // (undocumented)
-    readonly name: string;
-    // (undocumented)
-    setEditValue(record: IndexedRecord, value: DataServer.EditValue): void;
-    // (undocumented)
-    setEditValueEventer: RevField.SetEditValueEventer | undefined;
-}
-
-// @public (undocumented)
-export namespace RevField {
-    // (undocumented)
-    export namespace Field {
-        // (undocumented)
-        export function checkOrder(): void;
-        const // (undocumented)
-        idCount: number;
-        // (undocumented)
-        export type Id = FieldId;
-        // (undocumented)
-        export function idToHorizontalAlign(id: Id): HorizontalAlignEnum;
-        // (undocumented)
-        export function idToName(id: Id): string;
-    }
-    // (undocumented)
-    export const enum FieldId {
-        // (undocumented)
-        DefaultHeading = 3,
-        // (undocumented)
-        DefaultTextAlign = 4,
-        // (undocumented)
-        DefaultWidth = 5,
-        // (undocumented)
-        Heading = 1,
-        // (undocumented)
-        Name = 0,
-        // (undocumented)
-        SourceName = 2
-    }
-    // (undocumented)
-    export function generateHeading(customHeadingsService: RevFieldCustomHeadingsService, fieldDefinition: RevFieldDefinition): string;
-    // (undocumented)
-    export type GetEditValueEventer = (this: void, record: IndexedRecord) => DataServer.EditValue;
-    // (undocumented)
-    export type SetEditValueEventer = (this: void, record: IndexedRecord, value: DataServer.EditValue) => void;
-}
-
-// @public (undocumented)
-export class RevFieldCustomHeadingsService {
-    // (undocumented)
-    checkSave(): void;
-    // (undocumented)
-    load(): void;
-    // (undocumented)
-    save(): void;
-    // (undocumented)
-    setFieldHeading(sourceName: string, fieldName: string, text: string): void;
-    // (undocumented)
-    tryGetFieldHeading(sourceName: string, fieldName: string): string | undefined;
-}
-
-// @public (undocumented)
-export class RevFieldDefinition {
-    constructor(source: RevFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, defaultWidth?: number | undefined);
-    // (undocumented)
-    readonly defaultHeading: string;
-    // (undocumented)
-    readonly defaultTextAlign: HorizontalAlign;
-    // (undocumented)
-    readonly defaultWidth?: number | undefined;
-    // (undocumented)
-    readonly name: string;
-    // (undocumented)
-    readonly source: RevFieldSourceDefinition;
-    // (undocumented)
-    readonly sourcelessName: string;
-}
-
-// @public (undocumented)
-export namespace RevFieldDefinition {
-    // (undocumented)
-    export namespace Name {
-        // (undocumented)
-        export function compose(sourceName: string, sourcelessName: string): string;
-        // (undocumented)
-        export type DecomposedArray = [sourceName: string, sourcelessName: string];
-        // (undocumented)
-        export const enum DecomposeErrorId {
-            // (undocumented)
-            NotHas2Elements = 2,
-            // (undocumented)
-            QuotesNotClosedInLastElement = 1,
-            // (undocumented)
-            UnexpectedCharAfterQuotedElement = 0
-        }
-        // (undocumented)
-        export interface DecomposeErrorIdPlusExtra {
-            // (undocumented)
-            readonly errorId: DecomposeErrorId;
-            // (undocumented)
-            readonly extraInfo: string;
-        }
-        // (undocumented)
-        export function tryDecompose(name: string): Result<DecomposedArray, DecomposeErrorIdPlusExtra>;
-    }
-}
-
-// @public (undocumented)
-export class RevFieldSourceDefinition {
-    constructor(name: string);
-    // (undocumented)
-    readonly name: string;
 }
 
 // @public (undocumented)
@@ -1498,6 +1370,134 @@ export namespace RevRenderValue {
 }
 
 // @public (undocumented)
+export abstract class RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> implements RevRecordField {
+    constructor(definition: RevSourcedFieldDefinition, heading?: string);
+    // (undocumented)
+    readonly definition: RevSourcedFieldDefinition;
+    // (undocumented)
+    getEditValue(record: IndexedRecord): DataServer.EditValue;
+    // (undocumented)
+    getEditValueEventer: RevSourcedField.GetEditValueEventer | undefined;
+    // (undocumented)
+    abstract getViewValue(record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    heading: string;
+    // (undocumented)
+    index: Integer;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    setEditValue(record: IndexedRecord, value: DataServer.EditValue): void;
+    // (undocumented)
+    setEditValueEventer: RevSourcedField.SetEditValueEventer | undefined;
+}
+
+// @public (undocumented)
+export namespace RevSourcedField {
+    // (undocumented)
+    export namespace Field {
+        // (undocumented)
+        export function checkOrder(): void;
+        const // (undocumented)
+        idCount: number;
+        // (undocumented)
+        export type Id = FieldId;
+        // (undocumented)
+        export function idToHorizontalAlign(id: Id): HorizontalAlignEnum;
+        // (undocumented)
+        export function idToName(id: Id): string;
+    }
+    // (undocumented)
+    export const enum FieldId {
+        // (undocumented)
+        DefaultHeading = 3,
+        // (undocumented)
+        DefaultTextAlign = 4,
+        // (undocumented)
+        DefaultWidth = 5,
+        // (undocumented)
+        Heading = 1,
+        // (undocumented)
+        Name = 0,
+        // (undocumented)
+        SourceName = 2
+    }
+    // (undocumented)
+    export function generateHeading(customHeadingsService: RevSourcedFieldCustomHeadingsService, fieldDefinition: RevSourcedFieldDefinition): string;
+    // (undocumented)
+    export type GetEditValueEventer = (this: void, record: IndexedRecord) => DataServer.EditValue;
+    // (undocumented)
+    export type SetEditValueEventer = (this: void, record: IndexedRecord, value: DataServer.EditValue) => void;
+}
+
+// @public (undocumented)
+export class RevSourcedFieldCustomHeadingsService {
+    // (undocumented)
+    checkSave(): void;
+    // (undocumented)
+    load(): void;
+    // (undocumented)
+    save(): void;
+    // (undocumented)
+    setFieldHeading(sourceName: string, fieldName: string, text: string): void;
+    // (undocumented)
+    tryGetFieldHeading(sourceName: string, fieldName: string): string | undefined;
+}
+
+// @public (undocumented)
+export class RevSourcedFieldDefinition {
+    constructor(sourceDefinition: RevSourcedFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, defaultWidth?: number | undefined);
+    // (undocumented)
+    readonly defaultHeading: string;
+    // (undocumented)
+    readonly defaultTextAlign: HorizontalAlign;
+    // (undocumented)
+    readonly defaultWidth?: number | undefined;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    readonly sourceDefinition: RevSourcedFieldSourceDefinition;
+    // (undocumented)
+    readonly sourcelessName: string;
+}
+
+// @public (undocumented)
+export namespace RevSourcedFieldDefinition {
+    // (undocumented)
+    export namespace Name {
+        // (undocumented)
+        export function compose(sourceName: string, sourcelessName: string): string;
+        // (undocumented)
+        export type DecomposedArray = [sourceName: string, sourcelessName: string];
+        // (undocumented)
+        export const enum DecomposeErrorId {
+            // (undocumented)
+            NotHas2Elements = 2,
+            // (undocumented)
+            QuotesNotClosedInLastElement = 1,
+            // (undocumented)
+            UnexpectedCharAfterQuotedElement = 0
+        }
+        // (undocumented)
+        export interface DecomposeErrorIdPlusExtra {
+            // (undocumented)
+            readonly errorId: DecomposeErrorId;
+            // (undocumented)
+            readonly extraInfo: string;
+        }
+        // (undocumented)
+        export function tryDecompose(name: string): Result<DecomposedArray, DecomposeErrorIdPlusExtra>;
+    }
+}
+
+// @public (undocumented)
+export class RevSourcedFieldSourceDefinition {
+    constructor(name: string);
+    // (undocumented)
+    readonly name: string;
+}
+
+// @public (undocumented)
 export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
     constructor(recordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, _correctnessState: CorrectnessState<Badness>, initialActiveFieldSources: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
@@ -1509,7 +1509,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     // (undocumented)
     close(opener: NamedOpener): void;
     // (undocumented)
-    createAllowedFields(): readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[];
+    createAllowedFields(): readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
     createRecordDefinition(index: Integer): RevTableRecordDefinition<TableFieldSourceDefinitionTypeId>;
     // (undocumented)
@@ -1690,7 +1690,7 @@ export namespace RevTable {
 }
 
 // @public (undocumented)
-export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> extends RevField<RenderValueTypeId, RenderAttributeTypeId> {
+export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
     constructor(textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, definition: RevTableField.Definition<RenderValueTypeId, RenderAttributeTypeId>, heading: string);
     // (undocumented)
     compare(left: RevTableValuesRecord<RenderValueTypeId, RenderAttributeTypeId>, right: RevTableValuesRecord<RenderValueTypeId, RenderAttributeTypeId>): number;
@@ -1715,8 +1715,8 @@ export namespace RevTableField {
     // (undocumented)
     export type Constructor<RenderValueTypeId, RenderAttributeTypeId> = new (textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, definition: RevTableField.Definition<RenderValueTypeId, RenderAttributeTypeId>, heading: string, index: Integer) => RevTableField<RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
-    export class Definition<RenderValueTypeId, RenderAttributeTypeId> extends RevFieldDefinition {
-        constructor(source: RevFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, gridFieldConstructor: RevTableField.Constructor<RenderValueTypeId, RenderAttributeTypeId>, gridValueConstructor: RevTableValue.Constructor<RenderValueTypeId, RenderAttributeTypeId>);
+    export class Definition<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedFieldDefinition {
+        constructor(sourceDefinition: RevSourcedFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, gridFieldConstructor: RevTableField.Constructor<RenderValueTypeId, RenderAttributeTypeId>, gridValueConstructor: RevTableValue.Constructor<RenderValueTypeId, RenderAttributeTypeId>);
         // (undocumented)
         readonly gridFieldConstructor: RevTableField.Constructor<RenderValueTypeId, RenderAttributeTypeId>;
         // (undocumented)
@@ -1726,7 +1726,7 @@ export namespace RevTableField {
 
 // @public (undocumented)
 export class RevTableFieldSource<TypeId, RenderValueTypeId, RenderAttributeTypeId> {
-    constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _customHeadingsService: RevFieldCustomHeadingsService, definition: RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId>, _headingPrefix: string);
+    constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _customHeadingsService: RevSourcedFieldCustomHeadingsService, definition: RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId>, _headingPrefix: string);
     // (undocumented)
     createTableFields(): RevTableField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
@@ -1742,7 +1742,7 @@ export class RevTableFieldSource<TypeId, RenderValueTypeId, RenderAttributeTypeI
 }
 
 // @public (undocumented)
-export abstract class RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevFieldSourceDefinition {
+export abstract class RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedFieldSourceDefinition {
     constructor(typeId: TypeId, name: string);
     // (undocumented)
     encodeFieldName(sourcelessFieldName: string): string;
@@ -1861,7 +1861,7 @@ export namespace RevTableRecordDefinition {
 
 // @public (undocumented)
 export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements CorrectnessState<Badness> {
-    constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _gridFieldCustomHeadingsService: RevFieldCustomHeadingsService, _tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _correctnessState: CorrectnessState<Badness>, definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[]);
+    constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _gridFieldCustomHeadingsService: RevSourcedFieldCustomHeadingsService, _tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _correctnessState: CorrectnessState<Badness>, definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
     get activeFieldSources(): readonly RevTableFieldSource<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
@@ -1879,7 +1879,7 @@ export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTyp
     // (undocumented)
     get count(): Integer;
     // (undocumented)
-    createAllowedFields(): readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[];
+    createAllowedFields(): readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
     abstract createDefinition(): RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
@@ -1901,7 +1901,7 @@ export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTyp
     // (undocumented)
     protected abstract getDefaultFieldSourceDefinitionTypeIds(): TableFieldSourceDefinitionTypeId[];
     // (undocumented)
-    protected readonly _gridFieldCustomHeadingsService: RevFieldCustomHeadingsService;
+    protected readonly _gridFieldCustomHeadingsService: RevSourcedFieldCustomHeadingsService;
     // (undocumented)
     indexOf(value: RevTableRecordDefinition<TableFieldSourceDefinitionTypeId>): Integer;
     // (undocumented)
@@ -1968,11 +1968,11 @@ export namespace RevTableRecordSource {
 
 // @public (undocumented)
 export abstract class RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
-    constructor(_customHeadingsService: RevFieldCustomHeadingsService, tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, typeId: TypeId, name: string, allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[]);
+    constructor(_customHeadingsService: RevSourcedFieldCustomHeadingsService, tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, typeId: TypeId, name: string, allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
     readonly allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[];
     // (undocumented)
-    createAllowedFields(): readonly RevAllowedField<RenderValueTypeId, RenderAttributeTypeId>[];
+    createAllowedFields(): readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
     abstract createDefaultLayoutDefinition(): RevGridLayoutDefinition;
     // (undocumented)

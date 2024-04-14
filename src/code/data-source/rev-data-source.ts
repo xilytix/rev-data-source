@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, IndexedRecord, LockOpenListItem, LockOpenManager, MapKey, MultiEvent, Ok, Result, UnreachableCaseError, newGuid } from '@xilytix/sysutils';
-import { RevFieldDefinition } from '../field/internal-api';
+import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import {
     RevGridLayout,
     RevGridLayoutOrReference,
@@ -326,7 +326,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         for (const column of columns) {
             const fieldName = column.fieldName;
 
-            const decomposeResult = RevFieldDefinition.Name.tryDecompose(fieldName);
+            const decomposeResult = RevSourcedFieldDefinition.Name.tryDecompose(fieldName);
             if (decomposeResult.isOk()) {
                 const decomposedFieldName = decomposeResult.value;
                 const sourceName = decomposedFieldName[0];

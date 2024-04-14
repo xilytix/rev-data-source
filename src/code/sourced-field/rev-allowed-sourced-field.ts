@@ -2,11 +2,11 @@
 
 import { AssertInternalError, IndexedRecord } from '@xilytix/sysutils';
 import { RevRenderValue } from '../render-value/internal-api';
-import { RevField } from './rev-field';
+import { RevSourcedField } from './rev-sourced-field';
 
 // AllowedGridField is used in Column selector
 /** @public */
-export class RevAllowedField<RenderValueTypeId, RenderAttributeTypeId> extends RevField<RenderValueTypeId, RenderAttributeTypeId> {
+export class RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
     override getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId> {
         throw new AssertInternalError('AGFGVV34340'); // never used to get data
     }
