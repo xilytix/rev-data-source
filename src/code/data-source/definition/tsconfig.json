@@ -10,6 +10,6 @@
   ],
   "references": [
     { "path": "../../table/tsconfig.json" },
-    { "path": "../../grid-layout/tsconfig.json" },
+    { "path": "../../column-order/tsconfig.json" },
   ]
 }

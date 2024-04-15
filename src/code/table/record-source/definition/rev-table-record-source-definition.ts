@@ -1,8 +1,8 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { JsonElement } from '@xilytix/sysutils';
+import { RevGridLayoutDefinition } from '../../../column-order/internal-api';
 import { RevAllowedSourcedField, RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../../sourced-field/internal-api';
-import { RevGridLayoutDefinition } from '../../../grid-layout/internal-api';
 import { RevTableFieldSourceDefinitionCachingFactoryService } from '../../field-source/internal-api';
 
 /** @public */

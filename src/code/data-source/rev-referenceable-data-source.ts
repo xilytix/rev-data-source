@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { IndexedRecord, LockOpenListItem } from '@xilytix/sysutils';
-import { RevRecordRowOrderDefinition, RevReferenceableGridLayoutsService } from '../grid-layout/internal-api';
+import { RevRecordRowOrderDefinition, RevReferenceableGridLayoutsService } from '../column-order/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevReferenceableDataSourceDefinition } from './definition/internal-api';
 import { RevDataSource } from './rev-data-source';

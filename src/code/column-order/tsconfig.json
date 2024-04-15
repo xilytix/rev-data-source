@@ -3,7 +3,7 @@
 {
   "extends": "../tsconfig.code.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../../tsbuildinfo/layout.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/column-order.tsbuildinfo"
   },
   "include": [
     "*.ts"

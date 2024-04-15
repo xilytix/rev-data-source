@@ -13,7 +13,7 @@
   ],
 
   "references": [
-    { "path": "../../../grid-layout/tsconfig.json" },
+    { "path": "../../../column-order/tsconfig.json" },
     { "path": "../../../sourced-field/tsconfig.json" },
     { "path": "../../field-source/tsconfig.json" },
   ]

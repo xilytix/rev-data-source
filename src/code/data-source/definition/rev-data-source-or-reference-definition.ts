@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition } from '../../grid-layout/internal-api';
+import { RevGridLayoutOrReferenceDefinition } from '../../column-order/internal-api';
 import { RevTableRecordSourceDefinitionFromJsonFactory } from '../../table/internal-api';
 import { RevDataSourceDefinition } from './rev-data-source-definition';
 
