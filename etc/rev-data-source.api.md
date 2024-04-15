@@ -27,18 +27,18 @@ import { UnreachableCaseInternalError } from '@xilytix/sysutils';
 import { UsableListChangeTypeId } from '@xilytix/sysutils';
 
 // @public (undocumented)
-export class RevAllowedFieldsGridLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId> extends RevGridLayoutDefinition {
+export class RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
+    // (undocumented)
+    getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
+}
+
+// @public (undocumented)
+export class RevAllowedSourcedFieldsGridLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId> extends RevGridLayoutDefinition {
     constructor(columns: readonly RevGridLayoutDefinition.Column[], allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[], fixedColumnCount: Integer);
     // (undocumented)
     readonly allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
     readonly fixedColumnCount: Integer;
-}
-
-// @public (undocumented)
-export class RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
-    // (undocumented)
-    getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
 }
 
 // @public (undocumented)
@@ -1005,6 +1005,8 @@ export class RevRecordRowOrderDefinition {
     readonly recordDefinitions: RevRecordDefinition[] | undefined;
     // (undocumented)
     saveToJson(element: JsonElement): void;
+    // Warning: (ae-forgotten-export) The symbol "RevRecordSortDefinition" needs to be exported by the entry point public-api.d.ts
+    //
     // (undocumented)
     readonly sortFields: RevRecordSortDefinition.Field[] | undefined;
 }
@@ -1080,24 +1082,6 @@ export class RevRecordSchemaServer<SF extends RevRecordField> implements SchemaS
 // @public
 export class RevRecordSimpleFunctionizeField<Record> extends RevRecordFunctionizeField {
     constructor(name: string, index: number, value: (record: Record) => DataServer.ViewValue, compare?: (left: Record, right: Record) => number, compareDesc?: (left: Record, right: Record) => number);
-}
-
-// @public (undocumented)
-export namespace RevRecordSortDefinition {
-    // (undocumented)
-    export interface Field {
-        // (undocumented)
-        ascending: boolean;
-        // (undocumented)
-        name: string;
-    }
-    // (undocumented)
-    export namespace Field {
-        // (undocumented)
-        export function saveToJson(definition: Field, element: JsonElement): void;
-        // (undocumented)
-        export function tryCreateFromJson(element: JsonElement): Field | undefined;
-    }
 }
 
 // @public

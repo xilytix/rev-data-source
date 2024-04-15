@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, JsonElement } from '@xilytix/sysutils';
-import { RevRecordDefinition } from './internal-api';
+import { RevRecordDefinition } from './rev-record-definition';
 import { RevRecordSortDefinition } from './rev-record-sort-definition';
 
 /** @public */

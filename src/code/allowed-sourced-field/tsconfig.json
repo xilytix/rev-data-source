@@ -3,16 +3,13 @@
 {
   "extends": "../tsconfig.code.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../../tsbuildinfo/data-source.tsbuildinfo"
+    "tsBuildInfoFile": "../../../tsbuildinfo/allowed-sourced-field.tsbuildinfo"
   },
   "include": [
     "*.ts"
   ],
   "references": [
-    { "path": "./definition/tsconfig.json" },
-    { "path": "../table/tsconfig.json" },
     { "path": "../sourced-field/tsconfig.json" },
-    { "path": "../record/tsconfig.json" },
     { "path": "../column-order/tsconfig.json" },
   ]
 }

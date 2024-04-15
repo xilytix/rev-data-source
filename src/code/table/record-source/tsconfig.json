@@ -18,7 +18,8 @@
     { "path": "../record-definition/tsconfig.json" },
     { "path": "../field-source/tsconfig.json" },
     { "path": "../field/tsconfig.json" },
-    { "path": "../../render-value/tsconfig.json" },
+    { "path": "../../allowed-sourced-field/tsconfig.json" },
     { "path": "../../sourced-field/tsconfig.json" },
+    { "path": "../../render-value/tsconfig.json" },
   ]
 }

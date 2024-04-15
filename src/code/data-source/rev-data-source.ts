@@ -5,10 +5,10 @@ import {
     RevGridLayout,
     RevGridLayoutOrReference,
     RevGridLayoutOrReferenceDefinition,
-    RevRecordRowOrderDefinition,
     RevReferenceableGridLayout,
     RevReferenceableGridLayoutsService
 } from "../column-order/internal-api";
+import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import { RevTable, RevTableFieldSourceDefinitionFactory, RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition } from './definition/internal-api';

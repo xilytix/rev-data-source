@@ -1,11 +1,12 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition, RevRecordRowOrderDefinition } from '../../column-order/internal-api';
+import { RevGridLayoutOrReferenceDefinition } from '../../column-order/internal-api';
+import { RevRecordRowOrderDefinition } from '../../record/internal-api';
 import {
     RevTableRecordSourceDefinition,
     RevTableRecordSourceDefinitionFromJsonFactory
-} from "../../table/record-source/internal-api";
+} from "../../table/internal-api";
 import { RevDataSourceDefinition } from './rev-data-source-definition';
 
 /** @public */

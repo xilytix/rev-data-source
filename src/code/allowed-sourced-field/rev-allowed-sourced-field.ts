@@ -2,7 +2,7 @@
 
 import { AssertInternalError, IndexedRecord } from '@xilytix/sysutils';
 import { RevRenderValue } from '../render-value/internal-api';
-import { RevSourcedField } from './rev-sourced-field';
+import { RevSourcedField } from '../sourced-field/internal-api';
 
 // AllowedGridField is used in Column selector
 /** @public */

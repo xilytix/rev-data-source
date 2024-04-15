@@ -9,6 +9,5 @@
     "*.ts"
   ],
   "references": [
-    { "path": "../../sourced-field/tsconfig.json" },
   ]
 }

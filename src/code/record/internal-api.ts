@@ -4,6 +4,7 @@ export { RevRecordDefinition } from './rev-record-definition';
 export * from './rev-record-error';
 export { RevRecordField } from './rev-record-field';
 export * from './rev-record-functionize-field';
+export { RevRecordRowOrderDefinition } from './rev-record-row-order-definition';
 export { RevRecordSchemaServer } from './rev-record-schema-server';
 export { RevRecordDataStore, RevRecordStore } from './rev-record-store';
 export * from './rev-record-types';
