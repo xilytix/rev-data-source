@@ -16,6 +16,6 @@
     { "path": "../../field-source/tsconfig.json" },
     { "path": "../../../allowed-sourced-field/tsconfig.json" },
     { "path": "../../../sourced-field/tsconfig.json" },
-    { "path": "../../../column-layout/tsconfig.json" },
+    { "path": "../../../column-layout/server/tsconfig.json" },
   ]
 }

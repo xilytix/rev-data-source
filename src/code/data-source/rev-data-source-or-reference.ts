@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, LockOpenListItem, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevReferenceableColumnLayoutsService } from '../column-layout/internal-api';
+import { RevReferenceableColumnLayoutsService } from '../column-layout/server/internal-api';
 import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition, RevDataSourceOrReferenceDefinition } from './definition/internal-api';

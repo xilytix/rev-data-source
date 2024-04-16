@@ -1,0 +1,13 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
+{
+  "extends": "../../../tsconfig.code.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/column-layout-server-definition.tsbuildinfo"
+  },
+  "include": [
+    "*.ts"
+  ],
+  "references": [
+  ]
+}

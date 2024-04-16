@@ -11,6 +11,6 @@
   "references": [
     { "path": "../../table/tsconfig.json" },
     { "path": "../../record/tsconfig.json" },
-    { "path": "../../column-layout/tsconfig.json" },
+    { "path": "../../column-layout/server/tsconfig.json" },
   ]
 }

@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Integer } from '@xilytix/sysutils';
-import { RevColumnLayoutDefinition } from "../column-layout/internal-api";
+import { RevColumnLayoutDefinition } from "../column-layout/server/internal-api";
 import { RevAllowedSourcedField } from './rev-allowed-sourced-field';
 
 /** @public */

@@ -1,6 +1,6 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { RevColumnLayoutDefinition } from '../../../column-layout/internal-api';
+import { RevColumnLayoutDefinition } from '../../../column-layout/server/internal-api';
 // import { BalancesTableFieldSourceDefinition } from './balances-table-field-source-definition';
 // import { BrokerageAccountTableFieldSourceDefinition } from './brokerage-account-table-field-source-definition';
 // import { CallPutSecurityDataItemTableFieldSourceDefinition } from './call-put-security-data-item-table-field-source-definition';

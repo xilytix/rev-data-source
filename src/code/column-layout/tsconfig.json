@@ -9,6 +9,6 @@
     "*.ts"
   ],
   "references": [
-    { "path": "./definition/tsconfig.json" },
+    { "path": "./server/tsconfig.json" },
   ]
 }

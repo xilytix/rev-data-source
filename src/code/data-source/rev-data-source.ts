@@ -7,7 +7,7 @@ import {
     RevColumnLayoutOrReferenceDefinition,
     RevReferenceableColumnLayout,
     RevReferenceableColumnLayoutsService
-} from "../column-layout/internal-api";
+} from "../column-layout/server/internal-api";
 import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import { RevTable, RevTableFieldSourceDefinitionFactory, RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../table/internal-api';

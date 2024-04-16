@@ -2,7 +2,7 @@
 
 import { JsonElement } from '@xilytix/sysutils';
 import { RevAllowedSourcedField } from '../../../allowed-sourced-field/internal-api';
-import { RevColumnLayoutDefinition } from '../../../column-layout/internal-api';
+import { RevColumnLayoutDefinition } from '../../../column-layout/server/internal-api';
 import { RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../../sourced-field/internal-api';
 import { RevTableFieldSourceDefinitionCachingFactoryService } from '../../field-source/internal-api';
 
