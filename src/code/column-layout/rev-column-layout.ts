@@ -15,39 +15,39 @@ import {
     moveElementsInArray,
     newGuid
 } from '@xilytix/sysutils';
-import { RevGridLayoutDefinition } from './definition/internal-api';
+import { RevColumnLayoutDefinition } from './definition/internal-api';
 
 /**
  * Provides access to a saved layout for a Grid
  *
  * @public
  */
-export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRecord {
+export class RevColumnLayout implements LockOpenListItem<RevColumnLayout>, IndexedRecord {
     readonly id: Guid;
     readonly mapKey: MapKey;
 
     public index: number;
 
-    private readonly _lockOpenManager: LockOpenManager<RevGridLayout>;
-    private readonly _columns = new Array<RevGridLayout.Column>(0);
+    private readonly _lockOpenManager: LockOpenManager<RevColumnLayout>;
+    private readonly _columns = new Array<RevColumnLayout.Column>(0);
 
     private _beginChangeCount = 0;
-    private _changeInitiator: RevGridLayout.ChangeInitiator | undefined;
+    private _changeInitiator: RevColumnLayout.ChangeInitiator | undefined;
     private _changed = false;
     private _widthsChanged = false;
 
-    private _changedMultiEvent = new MultiEvent<RevGridLayout.ChangedEventHandler>();
-    private _widthsChangedMultiEvent = new MultiEvent<RevGridLayout.WidthsChangedEventHandler>();
+    private _changedMultiEvent = new MultiEvent<RevColumnLayout.ChangedEventHandler>();
+    private _widthsChangedMultiEvent = new MultiEvent<RevColumnLayout.WidthsChangedEventHandler>();
 
     constructor(
-        definition?: RevGridLayoutDefinition,
+        definition?: RevColumnLayoutDefinition,
         id?: Guid,
         mapKey?: MapKey,
     ) {
         this.id = id ?? newGuid();
         this.mapKey = mapKey ?? this.id;
 
-        this._lockOpenManager = new LockOpenManager<RevGridLayout>(
+        this._lockOpenManager = new LockOpenManager<RevColumnLayout>(
             () => this.tryProcessFirstLock(),
             () => { this.processLastUnlock(); },
             () => { this.processFirstOpen(); },
@@ -55,7 +55,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         );
 
         if (definition !== undefined) {
-            this.applyDefinition(RevGridLayout.forceChangeInitiator, definition);
+            this.applyDefinition(RevColumnLayout.forceChangeInitiator, definition);
         }
     }
 
@@ -64,7 +64,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
     get openCount() { return this._lockOpenManager.openCount; }
     get openers(): readonly LockOpenListItem.Opener[] { return this._lockOpenManager.openers; }
 
-    get columns(): readonly RevGridLayout.Column[] { return this._columns; }
+    get columns(): readonly RevColumnLayout.Column[] { return this._columns; }
     get columnCount(): number { return this._columns.length; }
 
     tryLock(locker: LockOpenListItem.Locker): Promise<Result<void>> {
@@ -87,44 +87,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         return this._lockOpenManager.isLocked(ignoreOnlyLocker);
     }
 
-    // open(_opener: LockOpenListItem.Opener, fieldNames: string[]) {
-    //     const fieldCount = fieldNames.length;
-    //     this._fields.length = fieldCount;
-    //     for (let i = 0; i < fieldCount; i++) {
-    //         const fieldName = fieldNames[i];
-    //         const field = new GridLayout.Field(fieldName);
-    //         this._fields[i] = field;
-    //     }
-
-    //     const maxColumnCount = this._definition.columnCount;
-    //     const definitionColumns = this._definition.columns;
-    //     let columnCount = 0;
-    //     this._columns.length = maxColumnCount;
-    //     for (let i = 0; i < maxColumnCount; i++) {
-    //         const definitionColumn = definitionColumns[i];
-    //         const definitionColumnName = definitionColumn.name;
-    //         const foundField = this._fields.find((field) => field.name === definitionColumnName);
-    //         if (foundField !== undefined) {
-    //             this._columns[columnCount] = {
-    //                 index: columnCount,
-    //                 field: foundField,
-    //                 visible: true
-    //             }
-    //             columnCount++;
-    //         }
-    //         this._columns.length = columnCount;
-    //     }
-    //     this._definitionListChangeSubscriptionId = this._definition.subscribeListChangeEvent(
-    //         (listChangeTypeId, index, count) => this.handleDefinitionListChangeEvent(listChangeTypeId, index, count)
-    //     );
-    // }
-
-    // close(opener: LockOpenListItem.Opener) {
-    //     this._definition.unsubscribeListChangeEvent(this._definitionListChangeSubscriptionId);
-    //     this._definitionListChangeSubscriptionId = undefined;
-    // }
-
-    beginChange(initiator: RevGridLayout.ChangeInitiator) {
+    beginChange(initiator: RevColumnLayout.ChangeInitiator) {
         if (this._beginChangeCount++ === 0) {
             this._changeInitiator = initiator;
         } else {
@@ -134,7 +97,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         }
     }
 
-    equals(other: RevGridLayout): boolean {
+    equals(other: RevColumnLayout): boolean {
         return this.mapKey === other.mapKey;
     }
 
@@ -169,27 +132,27 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         }
     }
 
-    createCopy(): RevGridLayout {
-        const result = new RevGridLayout();
+    createCopy(): RevColumnLayout {
+        const result = new RevColumnLayout();
         result.assign(this);
         return result;
     }
 
-    createDefinition(): RevGridLayoutDefinition {
+    createDefinition(): RevColumnLayoutDefinition {
         const definitionColumns = this.createDefinitionColumns();
-        return new RevGridLayoutDefinition(definitionColumns);
+        return new RevColumnLayoutDefinition(definitionColumns);
     }
 
-    applyDefinition(initiator: RevGridLayout.ChangeInitiator, definition: RevGridLayoutDefinition): void {
+    applyDefinition(initiator: RevColumnLayout.ChangeInitiator, definition: RevColumnLayoutDefinition): void {
         this.setColumns(initiator, definition.columns);
     }
 
-    setColumns(initiator: RevGridLayout.ChangeInitiator, columns: readonly RevGridLayout.Column[]) {
+    setColumns(initiator: RevColumnLayout.ChangeInitiator, columns: readonly RevColumnLayout.Column[]) {
         const newCount = columns.length;
-        const newColumns = new Array<RevGridLayout.Column>(newCount);
+        const newColumns = new Array<RevColumnLayout.Column>(newCount);
         for (let i = 0; i < newCount; i++) {
             const column = columns[i];
-            newColumns[i] = RevGridLayout.Column.createCopy(column);
+            newColumns[i] = RevColumnLayout.Column.createCopy(column);
         }
 
         this.beginChange(initiator);
@@ -199,11 +162,11 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         this.endChange();
     }
 
-    getColumn(columnIndex: number): RevGridLayout.Column {
+    getColumn(columnIndex: number): RevColumnLayout.Column {
         return this._columns[columnIndex];
     }
 
-    indexOfColumn(column: RevGridLayout.Column) {
+    indexOfColumn(column: RevColumnLayout.Column) {
         return this._columns.indexOf(column);
     }
 
@@ -216,22 +179,22 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
     }
 
 
-    addColumn(initiator: RevGridLayout.ChangeInitiator, columnOrName: string | RevGridLayoutDefinition.Column) {
+    addColumn(initiator: RevColumnLayout.ChangeInitiator, columnOrName: string | RevColumnLayoutDefinition.Column) {
         this.addColumns(initiator, [columnOrName]);
     }
 
-    addColumns(initiator: RevGridLayout.ChangeInitiator, columnsNames: (string | RevGridLayoutDefinition.Column)[]) {
+    addColumns(initiator: RevColumnLayout.ChangeInitiator, columnsNames: (string | RevColumnLayoutDefinition.Column)[]) {
         const index = this._columns.length;
         this.insertColumns(initiator, index, columnsNames);
     }
 
-    insertColumns(initiator: RevGridLayout.ChangeInitiator, index: Integer, columnOrFieldNames: (string | RevGridLayoutDefinition.Column)[]) {
+    insertColumns(initiator: RevColumnLayout.ChangeInitiator, index: Integer, columnOrFieldNames: (string | RevColumnLayoutDefinition.Column)[]) {
         this.beginChange(initiator);
         const insertCount = columnOrFieldNames.length;
-        const insertColumns = new Array<RevGridLayoutDefinition.Column>(insertCount);
+        const insertColumns = new Array<RevColumnLayoutDefinition.Column>(insertCount);
         for (let i = 0; i < insertCount; i++) {
             const columnOrFieldName = columnOrFieldNames[i];
-            const column: RevGridLayout.Column = (typeof columnOrFieldName === 'string') ?
+            const column: RevColumnLayout.Column = (typeof columnOrFieldName === 'string') ?
                 { fieldName: columnOrFieldName, visible: undefined, autoSizableWidth: undefined } :
                 columnOrFieldName;
             this._columns[i] = column;
@@ -241,18 +204,18 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         this.endChange();
     }
 
-    removeColumn(initiator: RevGridLayout.ChangeInitiator, index: Integer) {
+    removeColumn(initiator: RevColumnLayout.ChangeInitiator, index: Integer) {
         this.removeColumns(initiator, index, 1);
     }
 
-    removeColumns(initiator: RevGridLayout.ChangeInitiator, index: Integer, count: Integer) {
+    removeColumns(initiator: RevColumnLayout.ChangeInitiator, index: Integer, count: Integer) {
         this.beginChange(initiator);
         this._columns.splice(index, count);
         this._changed = true;
         this.endChange();
     }
 
-    clearColumns(initiator: RevGridLayout.ChangeInitiator) {
+    clearColumns(initiator: RevColumnLayout.ChangeInitiator) {
         if (this._columns.length > 0 ) {
             this.beginChange(initiator);
             this._columns.length = 0;
@@ -261,7 +224,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         }
     }
 
-    moveColumn(initiator: RevGridLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer): boolean {
+    moveColumn(initiator: RevColumnLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer): boolean {
         this.beginChange(initiator);
         let result: boolean;
         if (fromColumnIndex === toColumnIndex) {
@@ -276,7 +239,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         return result;
     }
 
-    moveColumns(initiator: RevGridLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer, count: Integer): boolean {
+    moveColumns(initiator: RevColumnLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer, count: Integer): boolean {
         this.beginChange(initiator);
         let result: boolean;
         if (fromColumnIndex === toColumnIndex || count === 0) {
@@ -291,7 +254,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         return result;
     }
 
-    setColumnWidth(initiator: RevGridLayout.ChangeInitiator, fieldName: string, width: Integer | undefined) {
+    setColumnWidth(initiator: RevColumnLayout.ChangeInitiator, fieldName: string, width: Integer | undefined) {
         const column = this.findColumn(fieldName);
         if (column === undefined) {
             throw new AssertInternalError('GLSCW48483', fieldName);
@@ -305,54 +268,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         }
     }
 
-    // serialise(): GridLayout.SerialisedColumn[] {
-    //     return this._Columns.map<GridLayout.SerialisedColumn>((column) => {
-    //         const result: GridLayout.SerialisedColumn = {
-    //             name: column.field.name, width: column.width, priority: column.sortPriority, ascending: column.sortAscending
-    //         };
-
-    //         if (!column.visible) {
-    //             result.show = false;
-    //         }
-
-    //         return result;
-    //     });
-    // }
-
-    // setFieldColumnsByFieldNames(fieldNames: string[]): void {
-    //     for (let idx = 0; idx < fieldNames.length; idx++) {
-    //         const field = this.getFieldByName(fieldNames[idx]);
-    //         if (field !== undefined) {
-    //             this.moveFieldColumn(field, idx);
-    //         }
-    //     }
-    // }
-
-    // setFieldColumnsByColumnIndices(columnIndices: number[]): void {
-    //     for (let idx = 0; idx < columnIndices.length; idx++) {
-    //         const columnIdx = columnIndices[idx];
-    //         this.moveColumn(columnIdx, idx);
-    //     }
-    // }
-
-    // setFieldWidthByFieldName(fieldName: string, width?: number): void {
-    //     const columnIdx = this.getFieldColumnIndexByFieldName(fieldName);
-    //     if (columnIdx !== undefined) {
-    //         const column = this._columns[columnIdx];
-    //         this.setFieldWidthByColumn(column, width);
-    //     }
-    // }
-
-    // setFieldsVisible(fieldNames: string[], visible: boolean): void {
-    //     for (let idx = 0; idx < fieldNames.length; idx++) {
-    //         const columnIdx = this.getFieldColumnIndexByFieldName(fieldNames[idx]);
-    //         if (columnIdx !== undefined) {
-    //             this._columns[columnIdx].visible = visible;
-    //         }
-    //     }
-    // }
-
-    subscribeChangedEvent(handler: RevGridLayout.ChangedEventHandler): number {
+    subscribeChangedEvent(handler: RevColumnLayout.ChangedEventHandler): number {
         return this._changedMultiEvent.subscribe(handler);
     }
 
@@ -360,7 +276,7 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         this._changedMultiEvent.unsubscribe(subscriptionId);
     }
 
-    subscribeWidthsChangedEvent(handler: RevGridLayout.WidthsChangedEventHandler): number {
+    subscribeWidthsChangedEvent(handler: RevColumnLayout.WidthsChangedEventHandler): number {
         return this._widthsChangedMultiEvent.subscribe(handler);
     }
 
@@ -368,26 +284,26 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         this._widthsChangedMultiEvent.unsubscribe(subscriptionId);
     }
 
-    protected assign(other: RevGridLayout) {
+    protected assign(other: RevColumnLayout) {
         const columns = other._columns;
         const count = other.columnCount;
-        const copiedColumns = new Array<RevGridLayoutDefinition.Column>(count);
+        const copiedColumns = new Array<RevColumnLayoutDefinition.Column>(count);
         for (let i = 0; i < count; i++) {
             const column = columns[i];
-            const copiedColumn = RevGridLayoutDefinition.Column.createCopy(column);
+            const copiedColumn = RevColumnLayoutDefinition.Column.createCopy(column);
             copiedColumns[i] = copiedColumn;
         }
 
-        const definition = new RevGridLayoutDefinition(copiedColumns);
-        this.applyDefinition(RevGridLayout.forceChangeInitiator, definition);
+        const definition = new RevColumnLayoutDefinition(copiedColumns);
+        this.applyDefinition(RevColumnLayout.forceChangeInitiator, definition);
     }
 
-    protected createDefinitionColumns(): RevGridLayoutDefinition.Column[] {
+    protected createDefinitionColumns(): RevColumnLayoutDefinition.Column[] {
         const count = this.columnCount;
-        const definitionColumns = new Array<RevGridLayoutDefinition.Column>(count);
+        const definitionColumns = new Array<RevColumnLayoutDefinition.Column>(count);
         for (let i = 0; i < count; i++) {
             const column = this._columns[i];
-            const definitionColumn: RevGridLayoutDefinition.Column = {
+            const definitionColumn: RevColumnLayoutDefinition.Column = {
                 fieldName: column.fieldName,
                 autoSizableWidth: column.autoSizableWidth,
                 visible: column.visible,
@@ -415,21 +331,21 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         // nothing to do
     }
 
-    private notifyChanged(initiator: RevGridLayout.ChangeInitiator) {
+    private notifyChanged(initiator: RevColumnLayout.ChangeInitiator) {
         const handlers = this._changedMultiEvent.copyHandlers();
         for (const handler of handlers) {
             handler(initiator);
         }
     }
 
-    private notifyWidthsChanged(initiator: RevGridLayout.ChangeInitiator) {
+    private notifyWidthsChanged(initiator: RevColumnLayout.ChangeInitiator) {
         const handlers = this._widthsChangedMultiEvent.copyHandlers();
         for (const handler of handlers) {
             handler(initiator);
         }
     }
 
-    private setFieldWidthByColumn(column: RevGridLayout.Column, width?: number): void {
+    private setFieldWidthByColumn(column: RevColumnLayout.Column, width?: number): void {
         if (width === undefined) {
             delete column.autoSizableWidth;
         } else {
@@ -437,50 +353,13 @@ export class RevGridLayout implements LockOpenListItem<RevGridLayout>, IndexedRe
         }
     }
 
-    // SetFieldVisible(field: TFieldIndex | GridLayout.Field, visible: boolean): void {
-    //     this.columns[this.GetFieldColumnIndex(field)].Visible = visible;
-    // }
-
     private setColumnVisibility(columnIndex: number, visible: boolean | undefined): void {
         this._columns[columnIndex].visible = visible;
     }
-
-    // private moveFieldColumn(field: GridLayout.Field, columnIndex: number): void {
-    //     const oldColumnIndex = this.getFieldColumnIndexByField(field);
-
-    //     if (oldColumnIndex === undefined) {
-    //         throw new GridLayoutError(ErrorCode.GridLayoutFieldDoesNotExist, field.name);
-    //     }
-
-    //     this.moveColumn(oldColumnIndex, columnIndex);
-    // }
-
-    // private indexOfColumnByFieldName(fieldName: string): number | undefined {
-    //     const idx = this._columns.findIndex((column) => column.fieldName === fieldName);
-    //     return idx < 0 ? undefined : idx;
-    // }
-
-    // /** Gets all visible columns */
-    // private getVisibleColumns(): GridLayout.Column[] {
-    //     return this._columns.filter(column => column.visible);
-    // }
-
-    // private setFieldWidthByField(field: GridLayout.Field, width?: number): void {
-    //     const columnIdx = this.getFieldColumnIndexByField(field);
-    //     const column = this._columns[columnIdx];
-    //     this.setFieldWidthByColumn(column, width);
-    // }
-
-    // private setFieldWidthByFieldIndex(fieldIdx: GridRecordFieldIndex, width?: number): void {
-    //     const columnIdx = this.getFieldColumnIndexByFieldIndex(fieldIdx);
-    //     const column = this._columns[columnIdx];
-
-    //     this.setFieldWidthByColumn(column, width);
-    // }
 }
 
 /** @public */
-export namespace RevGridLayout {
+export namespace RevColumnLayout {
     export type ChangedEventHandler = (this: void, initiator: ChangeInitiator) => void;
     export type WidthsChangedEventHandler = (this: void, initiator: ChangeInitiator) => void;
 

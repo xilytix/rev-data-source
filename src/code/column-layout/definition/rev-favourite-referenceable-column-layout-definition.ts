@@ -3,7 +3,7 @@
 import { Guid, IndexedRecord } from '@xilytix/sysutils';
 
 /** @public */
-export class RevFavouriteReferenceableGridLayoutDefinition implements IndexedRecord {
+export class RevFavouriteReferenceableColumnLayoutDefinition implements IndexedRecord {
     name: string;
     id: Guid;
     index: number;

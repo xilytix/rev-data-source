@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition } from '../../column-order/internal-api';
+import { RevColumnLayoutOrReferenceDefinition } from '../../column-layout/internal-api';
 import { RevTableRecordSourceDefinitionFromJsonFactory } from '../../table/internal-api';
 import { RevDataSourceDefinition } from './rev-data-source-definition';
 
@@ -31,15 +31,15 @@ export class RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeI
         }
     }
 
-    canUpdateGridLayoutDefinitionOrReference(): boolean {
+    canUpdateColumnLayoutDefinitionOrReference(): boolean {
         return this.dataSourceDefinition !== undefined;
     }
 
-    updateGridLayoutDefinitionOrReference(value: RevGridLayoutOrReferenceDefinition) {
+    updateColumnLayoutDefinitionOrReference(value: RevColumnLayoutOrReferenceDefinition) {
         if (this.dataSourceDefinition === undefined) {
             throw new AssertInternalError('GSDONRS45000');
         } else {
-            this.dataSourceDefinition.gridLayoutOrReferenceDefinition = value;
+            this.dataSourceDefinition.columnLayoutOrReferenceDefinition = value;
         }
     }
 }

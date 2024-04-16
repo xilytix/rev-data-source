@@ -2,7 +2,7 @@
 
 import { JsonElement } from '@xilytix/sysutils';
 import { RevAllowedSourcedField } from '../../../allowed-sourced-field/internal-api';
-import { RevGridLayoutDefinition } from '../../../column-order/internal-api';
+import { RevColumnLayoutDefinition } from '../../../column-layout/internal-api';
 import { RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../../sourced-field/internal-api';
 import { RevTableFieldSourceDefinitionCachingFactoryService } from '../../field-source/internal-api';
 
@@ -40,7 +40,7 @@ export abstract class RevTableRecordSourceDefinition<TypeId, TableFieldSourceDef
         return result;
     }
 
-    // createLayoutDefinition(fieldIds: TableFieldSourceDefinition.FieldId[]): GridLayoutDefinition {
+    // createLayoutDefinition(fieldIds: TableFieldSourceDefinition.FieldId[]): ColumnLayoutDefinition {
     //     const fieldSourceDefinitionRegistryService = this.fieldSourceDefinitionRegistryService;
     //     const count = fieldIds.length;
     //     const fieldNames = new Array<string>(count);
@@ -51,7 +51,7 @@ export abstract class RevTableRecordSourceDefinition<TypeId, TableFieldSourceDef
     //         fieldNames[i] = fieldName;
     //     }
 
-    //     return GridLayoutDefinition.createFromFieldNames(fieldNames);
+    //     return ColumnLayoutDefinition.createFromFieldNames(fieldNames);
     // }
 
 
@@ -59,7 +59,7 @@ export abstract class RevTableRecordSourceDefinition<TypeId, TableFieldSourceDef
         element.setString(RevTableRecordSourceDefinition.jsonTag_TypeId, this.name);
     }
 
-    abstract createDefaultLayoutDefinition(): RevGridLayoutDefinition;
+    abstract createDefaultLayoutDefinition(): RevColumnLayoutDefinition;
 }
 
 /** @public */

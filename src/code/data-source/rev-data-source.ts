@@ -2,12 +2,12 @@
 
 import { AssertInternalError, Err, Guid, IndexedRecord, LockOpenListItem, LockOpenManager, MapKey, MultiEvent, Ok, Result, UnreachableCaseError, newGuid } from '@xilytix/sysutils';
 import {
-    RevGridLayout,
-    RevGridLayoutOrReference,
-    RevGridLayoutOrReferenceDefinition,
-    RevReferenceableGridLayout,
-    RevReferenceableGridLayoutsService
-} from "../column-order/internal-api";
+    RevColumnLayout,
+    RevColumnLayoutOrReference,
+    RevColumnLayoutOrReferenceDefinition,
+    RevReferenceableColumnLayout,
+    RevReferenceableColumnLayoutsService
+} from "../column-layout/internal-api";
 import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevSourcedFieldDefinition } from '../sourced-field/internal-api';
 import { RevTable, RevTableFieldSourceDefinitionFactory, RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../table/internal-api';
@@ -33,19 +33,19 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     >;
 
     private readonly _tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
-    private _gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined;
+    private _columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition | undefined;
     private _initialRowOrderDefinition: RevRecordRowOrderDefinition | undefined;
 
     private _lockedTableRecordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
-    private _lockedGridLayout: RevGridLayout | undefined;
-    private _lockedReferenceableGridLayout: RevReferenceableGridLayout | undefined;
+    private _lockedColumnLayout: RevColumnLayout | undefined;
+    private _lockedReferenceableColumnLayout: RevReferenceableColumnLayout | undefined;
 
     private _table: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
 
-    private _gridLayoutSetMultiEvent = new MultiEvent<RevDataSource.GridLayoutSetEventHandler>();
+    private _columnLayoutSetMultiEvent = new MultiEvent<RevDataSource.GridColumnSetEventHandler>();
 
     constructor(
-        private readonly _referenceableGridLayoutsService: RevReferenceableGridLayoutsService,
+        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
         private readonly _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
         definition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
@@ -66,7 +66,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         );
 
         this._tableRecordSourceDefinition = definition.tableRecordSourceDefinition;
-        this._gridLayoutOrReferenceDefinition = definition.gridLayoutOrReferenceDefinition;
+        this._columnLayoutOrReferenceDefinition = definition.columnLayoutOrReferenceDefinition;
         this._initialRowOrderDefinition = definition.rowOrderDefinition;
     }
 
@@ -76,8 +76,8 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     get openers(): readonly LockOpenListItem.Opener[] { return this._lockOpenManager.openers; }
 
     get lockedTableRecordSource() { return this._lockedTableRecordSource; }
-    get lockedGridLayout() { return this._lockedGridLayout; }
-    get lockedReferenceableGridLayout() { return this._lockedReferenceableGridLayout; }
+    get lockedColumnLayout() { return this._lockedColumnLayout; }
+    get lockedReferenceableColumnLayout() { return this._lockedReferenceableColumnLayout; }
     get initialRowOrderDefinition() { return this._initialRowOrderDefinition; }
 
     get table() { return this._table; }
@@ -110,11 +110,11 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         rowOrderDefinition: RevRecordRowOrderDefinition | undefined
     ): RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         const tableRecordSourceDefinition = this.createTableRecordSourceDefinition();
-        const gridLayoutOrReferenceDefinition = this.createGridLayoutOrReferenceDefinition();
+        const columnLayoutOrReferenceDefinition = this.createColumnLayoutOrReferenceDefinition();
 
         return new RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
             tableRecordSourceDefinition,
-            gridLayoutOrReferenceDefinition,
+            columnLayoutOrReferenceDefinition,
             rowOrderDefinition,
         );
     }
@@ -127,13 +127,13 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         }
     }
 
-    createGridLayoutOrReferenceDefinition(): RevGridLayoutOrReferenceDefinition {
-        if (this._lockedReferenceableGridLayout !== undefined) {
-            return new RevGridLayoutOrReferenceDefinition(this._lockedReferenceableGridLayout.id);
+    createColumnLayoutOrReferenceDefinition(): RevColumnLayoutOrReferenceDefinition {
+        if (this._lockedReferenceableColumnLayout !== undefined) {
+            return new RevColumnLayoutOrReferenceDefinition(this._lockedReferenceableColumnLayout.id);
         } else {
-            if (this._lockedGridLayout !== undefined) {
-                const gridLayoutDefinition = this._lockedGridLayout.createDefinition();
-                return new RevGridLayoutOrReferenceDefinition(gridLayoutDefinition);
+            if (this._lockedColumnLayout !== undefined) {
+                const columnLayoutDefinition = this._lockedColumnLayout.createDefinition();
+                return new RevColumnLayoutOrReferenceDefinition(columnLayoutDefinition);
             } else {
                 throw new AssertInternalError('GSCGLONRD23008');
             }
@@ -141,84 +141,84 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     }
 
     /** Can only call if a DataSource is already opened */
-    async tryOpenGridLayoutOrReferenceDefinition(
-        definition: RevGridLayoutOrReferenceDefinition,
+    async tryOpenColumnLayoutOrReferenceDefinition(
+        definition: RevColumnLayoutOrReferenceDefinition,
         opener: LockOpenListItem.Opener
-    ): Promise<Result<void, RevGridLayoutOrReference.LockErrorIdPlusTryError>> {
-        const lockResult = await this.tryCreateAndLockGridLayoutFromDefinition(definition, opener);
+    ): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>> {
+        const lockResult = await this.tryCreateAndLockColumnLayoutFromDefinition(definition, opener);
         if (lockResult.isErr()) {
             return new Err(lockResult.error);
         } else {
-            this.closeLockedGridLayout(opener);
-            this.unlockGridLayout(opener);
+            this.closeLockedColumnLayout(opener);
+            this.unlockColumnLayout(opener);
 
-            this._gridLayoutOrReferenceDefinition = definition;
+            this._columnLayoutOrReferenceDefinition = definition;
 
             const lockedLayouts = lockResult.value;
-            const layout = lockedLayouts.gridLayout;
-            this._lockedGridLayout = layout;
-            this._lockedReferenceableGridLayout = lockedLayouts.referenceableGridLayout;
+            const layout = lockedLayouts.columnLayout;
+            this._lockedColumnLayout = layout;
+            this._lockedReferenceableColumnLayout = lockedLayouts.referenceableColumnLayout;
 
-            this.openLockedGridLayout(opener);
+            this.openLockedColumnLayout(opener);
 
             if (this._table === undefined) {
                 throw new AssertInternalError('GSOGLDLT23008')
             } else {
                 const tableFieldSourceDefinitionTypeIds = this.getTableFieldSourceDefinitionTypeIdsFromLayout(layout);
                 this._table.setActiveFieldSources(tableFieldSourceDefinitionTypeIds, true);
-                this.notifyGridLayoutSet();
+                this.notifyColumnLayoutSet();
                 return new Ok(undefined);
             }
         }
     }
 
-    subscribeGridLayoutSetEvent(handler: RevDataSource.GridLayoutSetEventHandler) {
-        return this._gridLayoutSetMultiEvent.subscribe(handler);
+    subscribeColumnLayoutSetEvent(handler: RevDataSource.GridColumnSetEventHandler) {
+        return this._columnLayoutSetMultiEvent.subscribe(handler);
     }
 
-    unsubscribeGridLayoutSetEvent(subscriptionId: MultiEvent.SubscriptionId) {
-        this._gridLayoutSetMultiEvent.unsubscribe(subscriptionId);
+    unsubscribeColumnLayoutSetEvent(subscriptionId: MultiEvent.SubscriptionId) {
+        this._columnLayoutSetMultiEvent.unsubscribe(subscriptionId);
     }
 
-    private notifyGridLayoutSet() {
-        const handlers = this._gridLayoutSetMultiEvent.copyHandlers();
+    private notifyColumnLayoutSet() {
+        const handlers = this._columnLayoutSetMultiEvent.copyHandlers();
         for (let i = 0; i < handlers.length; i++) {
             handlers[i]();
         }
     }
 
-    private async tryLockGridLayout(locker: LockOpenListItem.Locker): Promise<Result<RevDataSource.LockedGridLayouts, RevGridLayoutOrReference.LockErrorIdPlusTryError>> {
-        let gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition;
-        if (this._gridLayoutOrReferenceDefinition !== undefined) {
-            gridLayoutOrReferenceDefinition = this._gridLayoutOrReferenceDefinition;
+    private async tryLockColumnLayout(locker: LockOpenListItem.Locker): Promise<Result<RevDataSource.LockedColumnLayouts, RevColumnLayoutOrReference.LockErrorIdPlusTryError>> {
+        let columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition;
+        if (this._columnLayoutOrReferenceDefinition !== undefined) {
+            columnLayoutOrReferenceDefinition = this._columnLayoutOrReferenceDefinition;
         } else {
-            const gridLayoutDefinition = this._tableRecordSourceDefinition.createDefaultLayoutDefinition();
-            gridLayoutOrReferenceDefinition = new RevGridLayoutOrReferenceDefinition(gridLayoutDefinition);
+            const columnLayoutDefinition = this._tableRecordSourceDefinition.createDefaultLayoutDefinition();
+            columnLayoutOrReferenceDefinition = new RevColumnLayoutOrReferenceDefinition(columnLayoutDefinition);
         }
-        const result = await this.tryCreateAndLockGridLayoutFromDefinition(gridLayoutOrReferenceDefinition, locker);
+        const result = await this.tryCreateAndLockColumnLayoutFromDefinition(columnLayoutOrReferenceDefinition, locker);
         return result;
     }
 
-    private async tryCreateAndLockGridLayoutFromDefinition(
-        gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition,
+    private async tryCreateAndLockColumnLayoutFromDefinition(
+        columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition,
         locker: LockOpenListItem.Locker
-    ): Promise<Result<RevDataSource.LockedGridLayouts, RevGridLayoutOrReference.LockErrorIdPlusTryError>> {
-        const gridLayoutOrReference = new RevGridLayoutOrReference(
-            this._referenceableGridLayoutsService,
-            gridLayoutOrReferenceDefinition
+    ): Promise<Result<RevDataSource.LockedColumnLayouts, RevColumnLayoutOrReference.LockErrorIdPlusTryError>> {
+        const columnLayoutOrReference = new RevColumnLayoutOrReference(
+            this._referenceableColumnLayoutsService,
+            columnLayoutOrReferenceDefinition
         );
-        const gridLayoutOrReferenceLockResult = await gridLayoutOrReference.tryLock(locker);
-        if (gridLayoutOrReferenceLockResult.isErr()) {
-            return gridLayoutOrReferenceLockResult.createType();
+        const columnLayoutOrReferenceLockResult = await columnLayoutOrReference.tryLock(locker);
+        if (columnLayoutOrReferenceLockResult.isErr()) {
+            return columnLayoutOrReferenceLockResult.createType();
         } else {
-            const gridLayout = gridLayoutOrReference.lockedGridLayout;
-            if (gridLayout === undefined) {
+            const columnLayout = columnLayoutOrReference.lockedColumnLayout;
+            if (columnLayout === undefined) {
                 throw new AssertInternalError('GSTLGL23008');
             } else {
-                const referenceableGridLayout = gridLayoutOrReference.lockedReferenceableGridLayout;
-                const layouts: RevDataSource.LockedGridLayouts = {
-                    gridLayout,
-                    referenceableGridLayout,
+                const referenceableColumnLayout = columnLayoutOrReference.lockedReferenceableColumnLayout;
+                const layouts: RevDataSource.LockedColumnLayouts = {
+                    columnLayout,
+                    referenceableColumnLayout,
                 }
                 return new Ok(layouts);
             }
@@ -236,17 +236,17 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
             return new Err(error);
         } else {
             this._lockedTableRecordSource = tableRecordSource;
-            const lockGridLayoutResult = await this.tryLockGridLayout(locker);
-            if (lockGridLayoutResult.isErr()) {
+            const lockColumnLayoutResult = await this.tryLockColumnLayout(locker);
+            if (lockColumnLayoutResult.isErr()) {
                 this._lockedTableRecordSource.unlock(locker);
                 this._lockedTableRecordSource = undefined;
-                const lockErrorIdPlusTryError = lockGridLayoutResult.error;
-                const errorId = RevDataSource.LockError.fromRevGridLayoutOrReference(lockErrorIdPlusTryError.errorId);
+                const lockErrorIdPlusTryError = lockColumnLayoutResult.error;
+                const errorId = RevDataSource.LockError.fromRevColumnLayoutOrReference(lockErrorIdPlusTryError.errorId);
                 return new Err({ errorId, tryError: lockErrorIdPlusTryError.tryError });
             } else {
-                const lockedLayouts = lockGridLayoutResult.value;
-                this._lockedGridLayout = lockedLayouts.gridLayout;
-                this._lockedReferenceableGridLayout = lockedLayouts.referenceableGridLayout;
+                const lockedLayouts = lockColumnLayoutResult.value;
+                this._lockedColumnLayout = lockedLayouts.columnLayout;
+                this._lockedReferenceableColumnLayout = lockedLayouts.referenceableColumnLayout;
                 return new Ok(undefined)
             }
         }
@@ -260,21 +260,21 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
             this._lockedTableRecordSource.finalise();
             this._lockedTableRecordSource = undefined;
 
-            if (this._lockedGridLayout === undefined) {
+            if (this._lockedColumnLayout === undefined) {
                 throw new AssertInternalError('GSUL23008');
             } else {
-                this.unlockGridLayout(locker);
+                this.unlockColumnLayout(locker);
             }
         }
     }
 
     private processFirstOpen(opener: LockOpenListItem.Opener) {
-        this.openLockedGridLayout(opener);
+        this.openLockedColumnLayout(opener);
 
-        if (this._lockedTableRecordSource === undefined || this._lockedGridLayout === undefined) {
+        if (this._lockedTableRecordSource === undefined || this._lockedColumnLayout === undefined) {
             throw new AssertInternalError('GSOLT23008');
         } else {
-            const tableFieldSourceDefinitionTypeIds = this.getTableFieldSourceDefinitionTypeIdsFromLayout(this._lockedGridLayout);
+            const tableFieldSourceDefinitionTypeIds = this.getTableFieldSourceDefinitionTypeIdsFromLayout(this._lockedColumnLayout);
             this._table = new RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>(
                 this._lockedTableRecordSource,
                 this._tableRecordSourceFactory.createCorrectnessState(),
@@ -290,37 +290,37 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         } else {
             this._table.close(opener);
             this._table = undefined;
-            this.closeLockedGridLayout(opener);
+            this.closeLockedColumnLayout(opener);
         }
     }
 
-    private unlockGridLayout(locker: LockOpenListItem.Locker) {
-        if (this._lockedGridLayout === undefined) {
+    private unlockColumnLayout(locker: LockOpenListItem.Locker) {
+        if (this._lockedColumnLayout === undefined) {
             throw new AssertInternalError('GSUGL23008')
         } else {
-            this._lockedGridLayout.unlock(locker);
-            this._lockedGridLayout = undefined;
-            this._lockedReferenceableGridLayout = undefined;
+            this._lockedColumnLayout.unlock(locker);
+            this._lockedColumnLayout = undefined;
+            this._lockedReferenceableColumnLayout = undefined;
         }
     }
 
-    private openLockedGridLayout(opener: LockOpenListItem.Opener) {
-        if (this._lockedGridLayout === undefined) {
+    private openLockedColumnLayout(opener: LockOpenListItem.Opener) {
+        if (this._lockedColumnLayout === undefined) {
             throw new AssertInternalError('GSOLGL23008');
         } else {
-            this._lockedGridLayout.openLocked(opener);
+            this._lockedColumnLayout.openLocked(opener);
         }
     }
 
-    private closeLockedGridLayout(opener: LockOpenListItem.Opener) {
-        if (this._lockedGridLayout === undefined) {
+    private closeLockedColumnLayout(opener: LockOpenListItem.Opener) {
+        if (this._lockedColumnLayout === undefined) {
             throw new AssertInternalError('GSCLGL23008');
         } else {
-            this._lockedGridLayout.closeLocked(opener);
+            this._lockedColumnLayout.closeLocked(opener);
         }
     }
 
-    private getTableFieldSourceDefinitionTypeIdsFromLayout(layout: RevGridLayout) {
+    private getTableFieldSourceDefinitionTypeIdsFromLayout(layout: RevColumnLayout) {
         const columns = layout.columns;
         const typeIds = new Array<TableFieldSourceDefinitionTypeId>();
         for (const column of columns) {
@@ -345,11 +345,11 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
 
 /** @public */
 export namespace RevDataSource {
-    export type GridLayoutSetEventHandler = (this: void) => void;
+    export type GridColumnSetEventHandler = (this: void) => void;
 
-    export interface LockedGridLayouts {
-        readonly gridLayout: RevGridLayout;
-        readonly referenceableGridLayout: RevReferenceableGridLayout | undefined;
+    export interface LockedColumnLayouts {
+        readonly columnLayout: RevColumnLayout;
+        readonly referenceableColumnLayout: RevReferenceableColumnLayout | undefined;
     }
 
     export const enum LockErrorId {
@@ -360,11 +360,11 @@ export namespace RevDataSource {
     }
 
     export namespace LockError {
-        export function fromRevGridLayoutOrReference(lockErrorId:  RevGridLayoutOrReference.LockErrorId): LockErrorId {
+        export function fromRevColumnLayoutOrReference(lockErrorId:  RevColumnLayoutOrReference.LockErrorId): LockErrorId {
             switch (lockErrorId) {
-                case RevGridLayoutOrReference.LockErrorId.DefinitionTry: return LockErrorId.LayoutDefinitionTry;
-                case RevGridLayoutOrReference.LockErrorId.ReferenceTry: return LockErrorId.LayoutReferenceTry;
-                case RevGridLayoutOrReference.LockErrorId.ReferenceNotFound: return LockErrorId.LayoutReferenceNotFound;
+                case RevColumnLayoutOrReference.LockErrorId.DefinitionTry: return LockErrorId.LayoutDefinitionTry;
+                case RevColumnLayoutOrReference.LockErrorId.ReferenceTry: return LockErrorId.LayoutReferenceTry;
+                case RevColumnLayoutOrReference.LockErrorId.ReferenceNotFound: return LockErrorId.LayoutReferenceNotFound;
                 default:
                     throw new UnreachableCaseError('RDSLEFRGLOR66643', lockErrorId);
             }

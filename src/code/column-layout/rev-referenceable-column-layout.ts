@@ -1,16 +1,16 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Integer } from '@xilytix/sysutils';
-import { RevReferenceableGridLayoutDefinition } from './definition/internal-api';
-import { RevGridLayout } from './rev-grid-layout';
+import { RevReferenceableColumnLayoutDefinition } from './definition/internal-api';
+import { RevColumnLayout } from './rev-column-layout';
 
 /** @public */
-export class RevReferenceableGridLayout extends RevGridLayout {
+export class RevReferenceableColumnLayout extends RevColumnLayout {
     readonly name: string;
     readonly upperCaseName: string;
 
     constructor(
-        definition: RevReferenceableGridLayoutDefinition,
+        definition: RevReferenceableColumnLayoutDefinition,
         index: Integer,
     ) {
         const id = definition.id;
@@ -21,8 +21,8 @@ export class RevReferenceableGridLayout extends RevGridLayout {
         this.index = index;
     }
 
-    override createDefinition(): RevReferenceableGridLayoutDefinition {
+    override createDefinition(): RevReferenceableColumnLayoutDefinition {
         const definitionColumns = this.createDefinitionColumns();
-        return new RevReferenceableGridLayoutDefinition(this.id, this.name, definitionColumns, 0);
+        return new RevReferenceableColumnLayoutDefinition(this.id, this.name, definitionColumns, 0);
     }
 }

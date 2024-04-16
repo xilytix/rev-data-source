@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutOrReferenceDefinition } from '../../column-order/internal-api';
+import { RevColumnLayoutOrReferenceDefinition } from '../../column-layout/internal-api';
 import { RevRecordRowOrderDefinition } from '../../record/internal-api';
 import {
     RevTableRecordSourceDefinition,
@@ -17,10 +17,10 @@ export class RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTyp
         readonly id: Guid,
         readonly name: string,
         tableRecordSourceDefinition: RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
-        gridLayoutDefinitionOrReference: RevGridLayoutOrReferenceDefinition | undefined,
+        columnLayoutDefinitionOrReference: RevColumnLayoutOrReferenceDefinition | undefined,
         rowOrderDefinition: RevRecordRowOrderDefinition | undefined,
     ) {
-        super(tableRecordSourceDefinition, gridLayoutDefinitionOrReference, rowOrderDefinition);
+        super(tableRecordSourceDefinition, columnLayoutDefinitionOrReference, rowOrderDefinition);
     }
 
     override saveToJson(element: JsonElement): void {
@@ -119,13 +119,13 @@ export namespace RevReferenceableDataSourceDefinition {
                     }
                     return new Err({ errorId, extra: undefined });
                 } else {
-                    let gridLayoutOrReferenceDefinition: RevGridLayoutOrReferenceDefinition | undefined;
+                    let columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition | undefined;
                     let layoutCreateFromJsonErrorId: RevDataSourceDefinition.LayoutCreateFromJsonErrorId | undefined;
-                    const gridLayoutDefinitionOrReferenceDefinitionResult = RevDataSourceDefinition.tryCreateGridLayoutOrReferenceDefinitionFromJson(element);
-                    if (gridLayoutDefinitionOrReferenceDefinitionResult.isErr()) {
-                        layoutCreateFromJsonErrorId = gridLayoutDefinitionOrReferenceDefinitionResult.error;
+                    const columnLayoutDefinitionOrReferenceDefinitionResult = RevDataSourceDefinition.tryCreateColumnLayoutOrReferenceDefinitionFromJson(element);
+                    if (columnLayoutDefinitionOrReferenceDefinitionResult.isErr()) {
+                        layoutCreateFromJsonErrorId = columnLayoutDefinitionOrReferenceDefinitionResult.error;
                     } else {
-                        gridLayoutOrReferenceDefinition = gridLayoutDefinitionOrReferenceDefinitionResult.value;
+                        columnLayoutOrReferenceDefinition = columnLayoutDefinitionOrReferenceDefinitionResult.value;
                     }
 
                     const rowOrderDefinition = RevDataSourceDefinition.tryGetRowOrderFromJson(element);
@@ -134,7 +134,7 @@ export namespace RevReferenceableDataSourceDefinition {
                         idResult.value,
                         nameResult.value,
                         tableRecordSourceDefinitionResult.value,
-                        gridLayoutOrReferenceDefinition,
+                        columnLayoutOrReferenceDefinition,
                         rowOrderDefinition,
                     );
                     return new Ok({ definition, layoutCreateFromJsonErrorId });

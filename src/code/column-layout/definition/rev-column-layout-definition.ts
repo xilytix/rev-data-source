@@ -3,8 +3,8 @@
 import { Err, Integer, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
 
 /** @public */
-export class RevGridLayoutDefinition {
-    constructor(readonly columns: readonly RevGridLayoutDefinition.Column[], readonly columnCreateErrorCount = 0) {
+export class RevColumnLayoutDefinition {
+    constructor(readonly columns: readonly RevColumnLayoutDefinition.Column[], readonly columnCreateErrorCount = 0) {
     }
 
     get columnCount() { return this.columns.length; }
@@ -15,26 +15,26 @@ export class RevGridLayoutDefinition {
         for (let i = 0; i < columnCount; i++) {
             const column = this.columns[i];
             const jsonElement = new JsonElement();
-            RevGridLayoutDefinition.Column.saveToJson(column, jsonElement);
+            RevColumnLayoutDefinition.Column.saveToJson(column, jsonElement);
             columnElements[i] = jsonElement;
         }
-        element.setElementArray(RevGridLayoutDefinition.JsonName.columns, columnElements);
+        element.setElementArray(RevColumnLayoutDefinition.JsonName.columns, columnElements);
     }
 
     createCopy() {
         const columnCount = this.columns.length;
-        const newColumns = new Array<RevGridLayoutDefinition.Column>(columnCount);
+        const newColumns = new Array<RevColumnLayoutDefinition.Column>(columnCount);
         for (let i = 0; i < columnCount; i++) {
             const column = this.columns[i];
-            const newColumn = RevGridLayoutDefinition.Column.createCopy(column);
+            const newColumn = RevColumnLayoutDefinition.Column.createCopy(column);
             newColumns[i] = newColumn;
         }
-        return new RevGridLayoutDefinition(newColumns, this.columnCreateErrorCount);
+        return new RevColumnLayoutDefinition(newColumns, this.columnCreateErrorCount);
     }
 }
 
 /** @public */
-export namespace RevGridLayoutDefinition {
+export namespace RevColumnLayoutDefinition {
     export namespace JsonName {
         export const columns = 'revColumns';
     }
@@ -127,9 +127,9 @@ export namespace RevGridLayoutDefinition {
         return columns;
     }
 
-    export function createFromFieldNames(fieldNames: readonly string[]): RevGridLayoutDefinition {
+    export function createFromFieldNames(fieldNames: readonly string[]): RevColumnLayoutDefinition {
         const columns = createColumnsFromFieldNames(fieldNames);
-        return new RevGridLayoutDefinition(columns);
+        return new RevColumnLayoutDefinition(columns);
     }
 
     export const enum CreateFromJsonErrorId {
@@ -140,17 +140,17 @@ export namespace RevGridLayoutDefinition {
     }
 
     export interface ColumnsCreatedFromJson {
-        readonly columns: RevGridLayoutDefinition.Column[];
+        readonly columns: RevColumnLayoutDefinition.Column[];
         readonly columnCreateErrorCount: Integer;
     }
 
-    export function tryCreateFromJson(element: JsonElement): Result<RevGridLayoutDefinition, CreateFromJsonErrorId> {
+    export function tryCreateFromJson(element: JsonElement): Result<RevColumnLayoutDefinition, CreateFromJsonErrorId> {
         const columnsResult = tryCreateColumnsFromJson(element);
         if (columnsResult.isErr()) {
             return columnsResult.createType();
         } else {
             const columnsCreatedFromJson = columnsResult.value;
-            const definition = new RevGridLayoutDefinition(columnsCreatedFromJson.columns, columnsCreatedFromJson.columnCreateErrorCount);
+            const definition = new RevColumnLayoutDefinition(columnsCreatedFromJson.columns, columnsCreatedFromJson.columnCreateErrorCount);
             return new Ok(definition);
         }
     }
@@ -177,12 +177,12 @@ export namespace RevGridLayoutDefinition {
         } else {
             const columnElements = getElementResult.value;
             const maxCount = columnElements.length;
-            const columns = new Array<RevGridLayoutDefinition.Column>(maxCount);
+            const columns = new Array<RevColumnLayoutDefinition.Column>(maxCount);
             let count = 0;
             let columnCreateErrorCount = 0;
             for (let i = 0; i < maxCount; i++ ) {
                 const columnElement = columnElements[i];
-                const column = RevGridLayoutDefinition.Column.tryCreateFromJson(columnElement);
+                const column = RevColumnLayoutDefinition.Column.tryCreateFromJson(columnElement);
                 if (column === undefined) {
                     columnCreateErrorCount++;
                 } else {

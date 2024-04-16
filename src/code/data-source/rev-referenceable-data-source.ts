@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { IndexedRecord, LockOpenListItem } from '@xilytix/sysutils';
-import { RevReferenceableGridLayoutsService } from '../column-order/internal-api';
+import { RevReferenceableColumnLayoutsService } from '../column-layout/internal-api';
 import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevReferenceableDataSourceDefinition } from './definition/internal-api';
@@ -21,14 +21,14 @@ export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, Table
     readonly upperCaseName: string;
 
     constructor(
-        referenceableGridLayoutsService: RevReferenceableGridLayoutsService,
+        referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
         tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
         lockedDefinition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         index: number,
     ) {
         const id = lockedDefinition.id;
-        super(referenceableGridLayoutsService, tableFieldSourceDefinitionFactory, tableRecordSourceFactory, lockedDefinition, id, id);
+        super(referenceableColumnLayoutsService, tableFieldSourceDefinitionFactory, tableRecordSourceFactory, lockedDefinition, id, id);
 
         this.name = lockedDefinition.name;
         this.upperCaseName = this.name.toUpperCase();
@@ -38,13 +38,13 @@ export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, Table
         rowOrderDefinition: RevRecordRowOrderDefinition
     ): RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
         const tableRecordSourceDefinition = this.createTableRecordSourceDefinition();
-        const gridLayoutOrReferenceDefinition = this.createGridLayoutOrReferenceDefinition();
+        const columnLayoutOrReferenceDefinition = this.createColumnLayoutOrReferenceDefinition();
 
         return new RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
             this.id,
             this.name,
             tableRecordSourceDefinition,
-            gridLayoutOrReferenceDefinition,
+            columnLayoutOrReferenceDefinition,
             rowOrderDefinition,
         );
     }

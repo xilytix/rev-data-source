@@ -3,7 +3,7 @@
 import { Integer } from '@xilytix/sysutils';
 
 /** @public */
-export namespace RevGridLayoutChange {
+export namespace RevColumnLayoutChange {
 
     export enum ActionId {
         MoveUp,

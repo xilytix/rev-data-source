@@ -10,6 +10,6 @@
   ],
   "references": [
     { "path": "../sourced-field/tsconfig.json" },
-    { "path": "../column-order/tsconfig.json" },
+    { "path": "../column-layout/tsconfig.json" },
   ]
 }

@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, LockOpenListItem, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevReferenceableGridLayoutsService } from '../column-order/internal-api';
+import { RevReferenceableColumnLayoutsService } from '../column-layout/internal-api';
 import { RevRecordRowOrderDefinition } from '../record/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition, RevDataSourceOrReferenceDefinition } from './definition/internal-api';
@@ -18,7 +18,7 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
     private _lockedReferenceableDataSource: RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
 
     constructor(
-        private readonly _referenceableGridLayoutsService: RevReferenceableGridLayoutsService,
+        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
         private readonly _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
         private readonly _referenceableDataSourcesService: RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
@@ -54,7 +54,7 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
     async tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevDataSourceOrReference.LockErrorIdPlusTryError>> {
         if (this._dataSourceDefinition !== undefined) {
             const dataSource = new RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>(
-                this._referenceableGridLayoutsService,
+                this._referenceableColumnLayoutsService,
                 this._tableFieldSourceDefinitionFactory,
                 this._tableRecordSourceFactory,
                 this._dataSourceDefinition

@@ -192,7 +192,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
 
     //     //         this.layout = this.createDefaultLayout();
     //     //         const layoutElement = element.tryGetElement(Table.JsonTag.layout, 'Table.loadFromJson: layout');
-    //     //         const serialisedColumns = GridLayoutIO.loadLayout(layoutElement);
+    //     //         const serialisedColumns = ColumnLayoutIO.loadLayout(layoutElement);
     //     //         if (serialisedColumns) {
     //     //             this.layout.deserialise(serialisedColumns);
     //     //         }
@@ -210,7 +210,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     //     this._definition.saveToJson(sourceElement);
     //     const layoutElement = element.newElement(Table.JsonTag.layout);
     //     const columns = this.layout.serialise();
-    //     GridLayoutIO.saveLayout(columns, layoutElement);
+    //     ColumnLayoutIO.saveLayout(columns, layoutElement);
 
     //     const orderedRecordDefinitionsElement = element.newElement(Table.JsonTag.orderedRecordDefinitions);
     //     for (let i = 0; i < this._orderedRecordDefinitions.length; i++) {
@@ -468,7 +468,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
             }
         }
 
-        this.layout = new GridLayout();
+        this.layout = new ColumnLayout();
         this.layout.Deserialise(src.layout.Serialise());
     }
 
@@ -1149,7 +1149,7 @@ export namespace RevTable {
 
     //             this.layout = this.createDefaultLayout();
     //             const layoutElement = element.tryGetElement(Table.JsonTag.layout, 'Table.loadFromJson: layout');
-    //             const serialisedColumns = GridLayoutIO.loadLayout(layoutElement);
+    //             const serialisedColumns = ColumnLayoutIO.loadLayout(layoutElement);
     //             if (serialisedColumns) {
     //                 this.layout.deserialise(serialisedColumns);
     //             }

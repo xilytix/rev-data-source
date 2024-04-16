@@ -197,7 +197,7 @@ export namespace RecordGrid {
     export type FieldColumnListChanged = (typeId: RevListChangedTypeId, index: number, count: number, targetIndex: number) => void;
 
     // export interface LayoutWithHeadersMap {
-    //     layout: GridLayout;
+    //     layout: ColumnLayout;
     //     headersMap: FieldNameToHeaderMap;
     // }
 

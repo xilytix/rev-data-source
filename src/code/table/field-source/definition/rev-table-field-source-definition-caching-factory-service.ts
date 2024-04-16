@@ -1,6 +1,6 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { RevGridLayoutDefinition } from '../../../column-order/internal-api';
+import { RevColumnLayoutDefinition } from '../../../column-layout/internal-api';
 // import { BalancesTableFieldSourceDefinition } from './balances-table-field-source-definition';
 // import { BrokerageAccountTableFieldSourceDefinition } from './brokerage-account-table-field-source-definition';
 // import { CallPutSecurityDataItemTableFieldSourceDefinition } from './call-put-security-data-item-table-field-source-definition';
@@ -98,7 +98,7 @@ export class RevTableFieldSourceDefinitionCachingFactoryService<TypeId, RenderVa
         return definition;
     }
 
-    createLayoutDefinition(fieldIds: RevTableFieldSourceDefinition.FieldId<TypeId>[]): RevGridLayoutDefinition {
+    createLayoutDefinition(fieldIds: RevTableFieldSourceDefinition.FieldId<TypeId>[]): RevColumnLayoutDefinition {
         const count = fieldIds.length;
         const fieldNames = new Array<string>(count);
         for (let i = 0; i < count; i++) {
@@ -107,6 +107,6 @@ export class RevTableFieldSourceDefinitionCachingFactoryService<TypeId, RenderVa
             fieldNames[i] = fieldName;
         }
 
-        return RevGridLayoutDefinition.createFromFieldNames(fieldNames);
+        return RevColumnLayoutDefinition.createFromFieldNames(fieldNames);
     }
 }

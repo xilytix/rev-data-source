@@ -1,28 +1,28 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { AssertInternalError, Err, Guid, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
-import { RevGridLayoutDefinition } from './rev-grid-layout-definition';
+import { RevColumnLayoutDefinition } from './rev-column-layout-definition';
 
 /** @public */
-export class RevGridLayoutOrReferenceDefinition {
+export class RevColumnLayoutOrReferenceDefinition {
     readonly referenceId: Guid | undefined;
-    readonly gridLayoutDefinition: RevGridLayoutDefinition | undefined;
+    readonly columnLayoutDefinition: RevColumnLayoutDefinition | undefined;
 
-    constructor(definitionOrReferenceId: RevGridLayoutDefinition | Guid) {
+    constructor(definitionOrReferenceId: RevColumnLayoutDefinition | Guid) {
         if (typeof definitionOrReferenceId === 'string') {
             this.referenceId = definitionOrReferenceId;
         } else {
-            this.gridLayoutDefinition = definitionOrReferenceId;
+            this.columnLayoutDefinition = definitionOrReferenceId;
         }
     }
 
     saveToJson(element: JsonElement) {
         if (this.referenceId !== undefined) {
-            element.setString(RevGridLayoutOrReferenceDefinition.JsonName.referenceId, this.referenceId);
+            element.setString(RevColumnLayoutOrReferenceDefinition.JsonName.referenceId, this.referenceId);
         } else {
-            if (this.gridLayoutDefinition !== undefined) {
-                const gridLayoutDefinitionElement = element.newElement(RevGridLayoutOrReferenceDefinition.JsonName.gridLayoutDefinition);
-                this.gridLayoutDefinition.saveToJson(gridLayoutDefinitionElement);
+            if (this.columnLayoutDefinition !== undefined) {
+                const columnLayoutDefinitionElement = element.newElement(RevColumnLayoutOrReferenceDefinition.JsonName.columnLayoutDefinition);
+                this.columnLayoutDefinition.saveToJson(columnLayoutDefinitionElement);
             } else {
                 throw new AssertInternalError('GLDONRSTJ34445');
             }
@@ -31,10 +31,10 @@ export class RevGridLayoutOrReferenceDefinition {
 }
 
 /** @public */
-export namespace RevGridLayoutOrReferenceDefinition {
+export namespace RevColumnLayoutOrReferenceDefinition {
     export namespace JsonName {
         export const referenceId = 'revReferenceId';
-        export const gridLayoutDefinition = 'revGridLayoutDefinition';
+        export const columnLayoutDefinition = 'revColumnLayoutDefinition';
     }
 
     export const enum CreateFromJsonErrorId {
@@ -47,34 +47,34 @@ export namespace RevGridLayoutOrReferenceDefinition {
         DefinitionAllColumnElementsAreInvalid,
     }
 
-    export function tryCreateFromJson(element: JsonElement): Result<RevGridLayoutOrReferenceDefinition, CreateFromJsonErrorId> {
+    export function tryCreateFromJson(element: JsonElement): Result<RevColumnLayoutOrReferenceDefinition, CreateFromJsonErrorId> {
         const referenceIdResult = element.tryGetString(JsonName.referenceId);
         if (referenceIdResult.isOk()) {
             const referenceId = referenceIdResult.value;
-            const gridLayoutOrReferenceDefinition = new RevGridLayoutOrReferenceDefinition(referenceId);
-            return new Ok(gridLayoutOrReferenceDefinition);
+            const columnLayoutOrReferenceDefinition = new RevColumnLayoutOrReferenceDefinition(referenceId);
+            return new Ok(columnLayoutOrReferenceDefinition);
         } else {
-            const definitionElementResult = element.tryGetElement(JsonName.gridLayoutDefinition);
+            const definitionElementResult = element.tryGetElement(JsonName.columnLayoutDefinition);
             if (definitionElementResult.isOk()) {
                 const definitionElement = definitionElementResult.value;
-                const definitionResult = RevGridLayoutDefinition.tryCreateFromJson(definitionElement);
+                const definitionResult = RevColumnLayoutDefinition.tryCreateFromJson(definitionElement);
                 if (definitionResult.isOk()) {
-                    const gridLayoutOrReferenceDefinition = new RevGridLayoutOrReferenceDefinition(definitionResult.value);
-                    return new Ok(gridLayoutOrReferenceDefinition);
+                    const columnLayoutOrReferenceDefinition = new RevColumnLayoutOrReferenceDefinition(definitionResult.value);
+                    return new Ok(columnLayoutOrReferenceDefinition);
                 } else {
                     const definitionErrorId = definitionResult.error;
                     let createFromJsonErrorId: CreateFromJsonErrorId;
                     switch (definitionErrorId) {
-                        case RevGridLayoutDefinition.CreateFromJsonErrorId.ColumnsElementIsNotDefined:
+                        case RevColumnLayoutDefinition.CreateFromJsonErrorId.ColumnsElementIsNotDefined:
                             createFromJsonErrorId = CreateFromJsonErrorId.DefinitionColumnsElementIsNotDefined;
                             break;
-                        case RevGridLayoutDefinition.CreateFromJsonErrorId.ColumnsElementIsNotAnArray:
+                        case RevColumnLayoutDefinition.CreateFromJsonErrorId.ColumnsElementIsNotAnArray:
                             createFromJsonErrorId = CreateFromJsonErrorId.DefinitionColumnsElementIsNotAnArray;
                             break;
-                        case RevGridLayoutDefinition.CreateFromJsonErrorId.ColumnElementIsNotAnObject:
+                        case RevColumnLayoutDefinition.CreateFromJsonErrorId.ColumnElementIsNotAnObject:
                             createFromJsonErrorId = CreateFromJsonErrorId.DefinitionColumnElementIsNotAnObject;
                             break;
-                        case RevGridLayoutDefinition.CreateFromJsonErrorId.AllColumnElementsAreInvalid:
+                        case RevColumnLayoutDefinition.CreateFromJsonErrorId.AllColumnElementsAreInvalid:
                             createFromJsonErrorId = CreateFromJsonErrorId.DefinitionAllColumnElementsAreInvalid;
                             break;
                         default:
