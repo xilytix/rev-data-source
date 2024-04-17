@@ -1,11 +1,12 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { BehavioredColumnSettings, BehavioredGridSettings, Column, ColumnsManager, DataServer, LinedHoverCell, RevListChangedTypeId, Revgrid, ViewCell } from '@xilytix/revgrid';
-import { AssertInternalError, Integer, MultiEvent, UnreachableCaseError } from '@xilytix/sysutils';
+import { BehavioredColumnSettings, BehavioredGridSettings, DataServer, LinedHoverCell, Revgrid, ViewCell } from '@xilytix/revgrid';
+import { AssertInternalError, Integer } from '@xilytix/sysutils';
 import { RevColumnLayoutGrid } from '../column-layout/internal-api';
-import { RevColumnLayout, RevColumnLayoutDefinition } from '../column-layout/server/internal-api';
+import { RevColumnLayout } from '../column-layout/server/internal-api';
 import { RevRecordDataServer, RevRecordFieldIndex, RevRecordIndex, RevRecordRowOrderDefinition, RevRecordSchemaServer, RevRecordSortDefinition, RevSourcedField } from './server/internal-api';
 
+/** @public */
 export class RevRecordGrid<
     RenderValueTypeId,
     RenderAttributeTypeId,
@@ -23,17 +24,11 @@ export class RevRecordGrid<
     selectionChangedEventer: RevRecordGrid.SelectionChangedEventer | undefined;
     dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<RenderValueTypeId, RenderAttributeTypeId, SF> | undefined;
 
-    private _columnLayout: RevColumnLayout | undefined;
     private _allowedFields: readonly SF[] | undefined;
 
     private _beenUsable = false;
     private _usableRendered = false;
     private _firstUsableRenderViewAnchor: RevRecordGrid.ViewAnchor | undefined;
-
-    private _activeColumnsAndWidthSetting = false;
-
-    private _columnLayoutChangedSubscriptionId: MultiEvent.SubscriptionId;
-    private _columnLayoutWidthsChangedSubscriptionId: MultiEvent.SubscriptionId;
 
     constructor(
         gridHostElement: HTMLElement,
@@ -146,41 +141,8 @@ export class RevRecordGrid<
     updateAllowedFields(fields: readonly SF[]) {
         this.schemaServer.setFields(fields);
         this._allowedFields = fields;
-        if (this._columnLayout !== undefined) {
-            this.setActiveColumnsAndWidths(fields, this._columnLayout);
-        }
-    }
-
-    updateColumnLayout(value: RevColumnLayout) {
-        if (value !== this._columnLayout) {
-            if (this._columnLayout !== undefined) {
-                this._columnLayout.unsubscribeChangedEvent(this._columnLayoutChangedSubscriptionId);
-                this._columnLayoutChangedSubscriptionId = undefined;
-                this._columnLayout.unsubscribeWidthsChangedEvent(this._columnLayoutWidthsChangedSubscriptionId);
-                this._columnLayoutChangedSubscriptionId = undefined;
-            }
-
-            this._columnLayout = value;
-            this._columnLayoutChangedSubscriptionId = this._columnLayout.subscribeChangedEvent(
-                (initiator) => {
-                    if (!this._activeColumnsAndWidthSetting) {
-                        this.processColumnLayoutChangedEvent(initiator);
-                    }
-                }
-            );
-            this._columnLayoutWidthsChangedSubscriptionId = this._columnLayout.subscribeWidthsChangedEvent(
-                (initiator) => { this.processColumnLayoutWidthsChangedEvent(initiator); }
-            );
-
-            this.processColumnLayoutChangedEvent(RevColumnLayout.forceChangeInitiator);
-        }
-    }
-
-    applyColumnLayoutDefinition(value: RevColumnLayoutDefinition) {
-        if (this._columnLayout === undefined) {
-            throw new AssertInternalError('RRGACLD34488');
-        } else {
-            this._columnLayout.applyDefinition(RevColumnLayout.forceChangeInitiator, value);
+        if (this.columnLayout !== undefined) {
+            this.setActiveColumnsAndWidths();
         }
     }
 
@@ -301,6 +263,26 @@ export class RevRecordGrid<
         return this.mainDataServer.sortByMany(specifiers);
     }
 
+    protected override areFieldsAllowed() {
+        return this._allowedFields !== undefined;
+    }
+
+    protected override isFieldNameAllowed(fieldName: string): boolean {
+        const allowedFields = this._allowedFields;
+        if (allowedFields === undefined) {
+            return false;
+        } else {
+            const allowedFieldCount = allowedFields.length;
+            for (let i = 0; i < allowedFieldCount; i++) {
+                const field = allowedFields[i];
+                if (field.name === fieldName) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     protected override descendantProcessColumnSort(_event: MouseEvent, headerOrFixedRowCell: ViewCell<BCS, SF>) {
         this.sortBy(headerOrFixedRowCell.viewLayoutColumn.column.field.index);
     }
@@ -369,58 +351,6 @@ export class RevRecordGrid<
         }
     }
 
-    protected override descendantProcessActiveColumnListChanged(
-        typeId: RevListChangedTypeId,
-        index: number,
-        count: number,
-        targetIndex: number | undefined,
-        ui: boolean,
-    ) {
-        if (ui) {
-            if (this._columnLayout === undefined) {
-                throw new AssertInternalError('RRGDPACLC56678');
-            } else {
-                switch (typeId) {
-                    case RevListChangedTypeId.Move: {
-                        if (targetIndex === undefined) {
-                            throw new AssertInternalError('RRGDPACCLCM44430');
-                        } else {
-                            this._columnLayout.moveColumns(this, index, count, targetIndex);
-                            break;
-                        }
-                    }
-                    case RevListChangedTypeId.Clear: {
-                        this._columnLayout.clearColumns(this);
-                        break;
-                    }
-                    case RevListChangedTypeId.Insert:
-                    case RevListChangedTypeId.Remove:
-                    case RevListChangedTypeId.Set: {
-                        const definition = this.createColumnLayoutDefinition();
-                        this._columnLayout.applyDefinition(this, definition);
-                        break;
-                    }
-                    default:
-                        throw new UnreachableCaseError('RRGDPACCLCU44430', typeId);
-                }
-            }
-        }
-    }
-
-    protected override descendantProcessColumnsWidthChanged(columns: Column<BCS, SF>[], ui: boolean) {
-        if (ui) {
-            if (this._columnLayout === undefined) {
-                throw new AssertInternalError('RGPCWC56678');
-            } else {
-                this._columnLayout.beginChange(this);
-                for (const column of columns) {
-                    this._columnLayout.setColumnWidth(this, column.field.name, column.width);
-                }
-                this._columnLayout.endChange();
-            }
-        }
-    }
-
     protected override descendantProcessSelectionChanged() {
         if (this.selectionChangedEventer !== undefined) {
             this.selectionChangedEventer();
@@ -462,81 +392,9 @@ export class RevRecordGrid<
             }
         }
     }
-
-
-    private processColumnLayoutChangedEvent(initiator: RevColumnLayout.ChangeInitiator) {
-        if (initiator !== this) {
-            if (this._allowedFields !== undefined) {
-                if (this._columnLayout === undefined) {
-                    throw new AssertInternalError('RGPGLCE56678');
-                } else {
-                    this.setActiveColumnsAndWidths(this._allowedFields, this._columnLayout);
-                }
-            }
-        }
-    }
-
-    private processColumnLayoutWidthsChangedEvent(initiator: RevColumnLayout.ChangeInitiator) {
-        if (initiator !== this) {
-            const columnNameWidths = this.createColumnNameWidths();
-            this.setColumnWidthsByName(columnNameWidths);
-        }
-    }
-
-    private createColumnNameWidths() {
-        if (this._columnLayout === undefined) {
-            throw new AssertInternalError('RGCCNW56678');
-        } else {
-            const schemaFieldNames = this.schemaServer.getFieldNames();
-            const columns = this._columnLayout.columns;
-            const maxCount = columns.length;
-            const columnNameWidths = new Array<ColumnsManager.FieldNameAndAutoSizableWidth>(maxCount);
-            let count = 0;
-            for (let i = 0; i < maxCount; i++) {
-                const column = columns[i];
-                const fieldName = column.fieldName;
-                if (schemaFieldNames.includes(fieldName)) {
-                    const columnNameWidth: ColumnsManager.FieldNameAndAutoSizableWidth = {
-                        name: fieldName,
-                        autoSizableWidth: column.autoSizableWidth,
-                    };
-                    columnNameWidths[count++] = columnNameWidth;
-                }
-            }
-            columnNameWidths.length = count;
-            return columnNameWidths;
-        }
-    }
-
-    private setActiveColumnsAndWidths(allowedFields: readonly SF[], columnLayout: RevColumnLayout) {
-        const layoutColumnCount = columnLayout.columnCount;
-        const layoutColumns = columnLayout.columns;
-        const nameAndWidths = new Array<ColumnsManager.FieldNameAndAutoSizableWidth>(layoutColumnCount);
-        let count = 0;
-        for (let i = 0; i < layoutColumnCount; i++) {
-            const column = layoutColumns[i];
-            const visible = column.visible;
-            if (visible === undefined || visible) {
-                const fieldName = column.fieldName;
-                const foundField = allowedFields.find((field) => field.name === fieldName);
-                if (foundField !== undefined) {
-                    nameAndWidths[count++] = {
-                        name: fieldName,
-                        autoSizableWidth: column.autoSizableWidth,
-                    };
-                }
-            }
-        }
-        nameAndWidths.length = count;
-        this._activeColumnsAndWidthSetting = true;
-        try {
-            this.setActiveColumnsAndWidthsByFieldName(nameAndWidths);
-        } finally {
-            this._activeColumnsAndWidthSetting = false;
-        }
-    }
 }
 
+/** @public */
 export namespace RevRecordGrid {
     export interface ViewAnchor {
         readonly columnScrollAnchorIndex: Integer;
