@@ -14,6 +14,6 @@
 
   "references": [
     { "path": "../value/tsconfig.json" },
-    { "path": "../../record/tsconfig.json" },
+    { "path": "../../record/server/record/tsconfig.json" },
   ]
 }

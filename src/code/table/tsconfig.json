@@ -20,7 +20,6 @@
     { "path": "./value-source/tsconfig.json" },
     { "path": "./field/tsconfig.json" },
     { "path": "./value/tsconfig.json" },
-    { "path": "../allowed-sourced-field/tsconfig.json" },
-    { "path": "../record/tsconfig.json" },
+    { "path": "../record/server/tsconfig.json" },
   ]
 }

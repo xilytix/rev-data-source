@@ -15,8 +15,7 @@
   "references": [
     { "path": "../value-source/tsconfig.json" },
     { "path": "../value/tsconfig.json" },
-    { "path": "../../sourced-field/tsconfig.json" },
     { "path": "../../render-value/tsconfig.json" },
-    { "path": "../../record/tsconfig.json" },
+    { "path": "../../record/server/tsconfig.json" },
   ]
 }

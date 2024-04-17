@@ -1,7 +1,7 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Integer, } from '@xilytix/sysutils';
-import { RevRecordValueRecentChangeTypeId } from '../../record/internal-api';
+import { RevRecordValueRecentChangeTypeId } from '../../record/server/record/internal-api';
 import { RevTableValue } from '../value/internal-api';
 
 /** @public */

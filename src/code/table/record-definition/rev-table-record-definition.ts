@@ -1,6 +1,6 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { RevRecordDefinition } from '../../record/internal-api';
+import { RevRecordDefinition } from '../../record/server/record/internal-api';
 
 /** @public */
 export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> extends RevRecordDefinition {

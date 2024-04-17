@@ -2,7 +2,7 @@
 
 import { AssertInternalError, Err, Guid, LockOpenListItem, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
 import { RevReferenceableColumnLayoutsService } from '../column-layout/server/internal-api';
-import { RevRecordRowOrderDefinition } from '../record/internal-api';
+import { RevRecordRowOrderDefinition } from '../record/server/record/internal-api';
 import { RevTableFieldSourceDefinitionFactory, RevTableRecordSourceFactory } from '../table/internal-api';
 import { RevDataSourceDefinition, RevDataSourceOrReferenceDefinition } from './definition/internal-api';
 import { RevDataSource } from './rev-data-source';

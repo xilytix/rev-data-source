@@ -1,11 +1,11 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 {
-  "extends": "../tsconfig.code.json",
+  "extends": "../../../tsconfig.code.json",
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../tsbuildinfo/field.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/record-server-sourced-field.tsbuildinfo"
   },
 
   "include": [
@@ -13,7 +13,7 @@
   ],
 
   "references": [
-    { "path": "../render-value/tsconfig.json" },
+    { "path": "../../../render-value/tsconfig.json" },
     { "path": "../record/tsconfig.json" },
   ]
 }

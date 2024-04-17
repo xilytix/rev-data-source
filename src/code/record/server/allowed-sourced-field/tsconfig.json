@@ -2,19 +2,14 @@
 
 {
   "extends": "../../../tsconfig.code.json",
-
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "../../../../../tsbuildinfo/table-record-source-definition.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/record-server-allowed-sourced-field.tsbuildinfo"
   },
-
   "include": [
     "*.ts"
   ],
-
   "references": [
-    { "path": "../../field-source/tsconfig.json" },
-    { "path": "../../../record/server/tsconfig.json" },
+    { "path": "../sourced-field/tsconfig.json" },
     { "path": "../../../column-layout/server/tsconfig.json" },
   ]
 }

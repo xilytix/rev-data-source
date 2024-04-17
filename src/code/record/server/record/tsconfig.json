@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.code.json",
+
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/record-server-record.tsbuildinfo"
+  },
+
+  "include": [
+    "*.ts"
+  ]
+}

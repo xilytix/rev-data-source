@@ -7,8 +7,8 @@ import {
     IndexedRecord,
     Integer
 } from '@xilytix/sysutils';
+import { RevRenderValue } from '../../../render-value/internal-api';
 import { RevRecordField } from '../record/internal-api';
-import { RevRenderValue } from '../render-value/internal-api';
 import { RevSourcedFieldCustomHeadingsService } from './rev-sourced-field-custom-headings-service';
 import { RevSourcedFieldDefinition } from './rev-sourced-field-definition';
 

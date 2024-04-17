@@ -1,3 +1,5 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
 import { BehavioredColumnSettings, BehavioredGridSettings, Revgrid, SchemaField } from '@xilytix/revgrid';
 import { RevColumnLayoutDefinition } from './server/internal-api';
 

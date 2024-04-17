@@ -1,8 +1,8 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
 import { Integer } from '@xilytix/sysutils';
+import { RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../record/server/sourced-field/internal-api';
 import { RevRenderValue } from '../../render-value/internal-api';
-import { RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../sourced-field/internal-api';
 import { RevTableField } from '../field/internal-api';
 import { RevTableFieldSourceDefinition } from './definition/internal-api';
 

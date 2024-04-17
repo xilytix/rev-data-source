@@ -1,3 +1,5 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
 {
   "extends": "../tsconfig.code.json",
 
@@ -8,5 +10,10 @@
 
   "include": [
     "*.ts"
+  ],
+
+  "references": [
+    { "path": "./server/tsconfig.json" },
+    { "path": "../column-layout/tsconfig.json" },
   ]
 }

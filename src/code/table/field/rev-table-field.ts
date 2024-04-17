@@ -5,8 +5,8 @@ import {
     Integer,
     compareValue
 } from '@xilytix/sysutils';
+import { RevSourcedField, RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../record/server/sourced-field/internal-api';
 import { RevRenderValue } from '../../render-value/internal-api';
-import { RevSourcedField, RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../sourced-field/internal-api';
 import { RevGenericTableValue, RevTableValue, RevTableValuesRecord } from '../value/internal-api';
 
 /** @public */

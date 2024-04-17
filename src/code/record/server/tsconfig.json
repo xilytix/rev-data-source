@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.code.json",
+
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "../../../../tsbuildinfo/record-server.tsbuildinfo"
+  },
+
+  "include": [
+    "*.ts"
+  ],
+
+  "references": [
+    { "path": "./allowed-sourced-field/tsconfig.json" },
+    { "path": "./sourced-field/tsconfig.json" },
+    { "path": "./record/tsconfig.json" },
+  ]
+}

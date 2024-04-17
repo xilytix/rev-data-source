@@ -14,7 +14,7 @@
 
   "references": [
     { "path": "../../../column-layout/server/tsconfig.json" },
-    { "path": "../../../sourced-field/tsconfig.json" },
+    { "path": "../../../record/server/tsconfig.json" },
     { "path": "../../field/tsconfig.json" },
     { "path": "../../value/tsconfig.json" },
   ]

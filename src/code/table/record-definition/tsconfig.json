@@ -13,6 +13,6 @@
   ],
 
   "references": [
-    { "path": "../../record/tsconfig.json" },
+    { "path": "../../record/server/record/tsconfig.json" },
   ]
 }

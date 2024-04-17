@@ -6,7 +6,7 @@ import {
     Integer,
     MultiEvent,
 } from '@xilytix/sysutils';
-import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordStore } from '../record/internal-api';
+import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordStore } from '../record/server/record/internal-api';
 import { RevTable } from './rev-table';
 
 /** @public */
