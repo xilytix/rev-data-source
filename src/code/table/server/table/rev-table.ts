@@ -17,7 +17,13 @@ import { RevTableRecordSource } from '../record-source/internal-api';
 import { RevTableRecord } from '../record/internal-api';
 
 /** @public */
-export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
+export class RevTable<
+    Badness,
+    TableRecordSourceDefinitionTypeId,
+    TableFieldSourceDefinitionTypeId,
+    RenderValueTypeId,
+    RenderAttributeTypeId
+> {
     // openEvent: Table.OpenEventHandler;
     // openChangeEvent: Table.OpenChangeEventHandler;
     // badnessChangedEvent: Table.badnessChangedEventHandler;
@@ -45,7 +51,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
 
     private _fieldsChangedMultiEvent = new MultiEvent<RevTable.FieldsChangedEventHandler>();
 
-    private _openMultiEvent = new MultiEvent<RevTable.OpenEventHandler<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>>();
+    private _openMultiEvent = new MultiEvent<RevTable.OpenEventHandler<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>>();
     private _openChangeMultiEvent = new MultiEvent<RevTable.OpenChangeEventHandler>();
     private _recordsLoadedMultiEvent = new MultiEvent<RevTable.RecordsLoadedEventHandler>();
     private _recordsInsertedMultiEvent = new MultiEvent<RevTable.RecordsInsertedEventHandler>();
@@ -63,7 +69,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     private _recordDisplayOrderSetMultiEvent = new MultiEvent<RevTable.RecordDisplayOrderSetEventHandler>();
 
     constructor(
-        readonly recordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+        readonly recordSource: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         private readonly _correctnessState: CorrectnessState<Badness>,
         initialActiveFieldSources: readonly TableFieldSourceDefinitionTypeId[],
     ) {
@@ -513,7 +519,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
         this._fieldsChangedMultiEvent.unsubscribe(subscriptionId);
     }
 
-    subscribeOpenEvent(handler: RevTable.OpenEventHandler<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) {
+    subscribeOpenEvent(handler: RevTable.OpenEventHandler<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) {
         return this._openMultiEvent.subscribe(handler);
     }
     unsubscribeOpenEvent(subscriptionId: MultiEvent.SubscriptionId) {
@@ -685,7 +691,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     }
 
     private notifyOpen(
-        recordDefinitionList: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
+        recordDefinitionList: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     ) {
         const handlers = this._openMultiEvent.copyHandlers();
         for (let i = 0; i < handlers.length; i++) {
@@ -1102,9 +1108,9 @@ export namespace RevTable {
 
     export type ExclusiveUnlockedEventer = (this: void) => void;
 
-    export type OpenEventHandler<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (
+    export type OpenEventHandler<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (
         this: void,
-        recordDefinitionList: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
+        recordDefinitionList: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     ) => void;
     export type OpenChangeEventHandler = (this: void, opened: boolean) => void;
     export type BadnessChangedEventHandler = (this: void) => void;

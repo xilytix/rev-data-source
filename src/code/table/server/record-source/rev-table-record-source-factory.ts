@@ -5,10 +5,10 @@ import { RevTableRecordSourceDefinition } from './definition/internal-api';
 import { RevTableRecordSource } from './rev-table-record-source';
 
 /** @public */
-export interface RevTableRecordSourceFactory<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
+export interface RevTableRecordSourceFactory<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
     create(
         definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
-    ): RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    ): RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
 
     createCorrectnessState(): CorrectnessState<Badness>;
 }

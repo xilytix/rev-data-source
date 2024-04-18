@@ -9,20 +9,27 @@ import { RevDataSourceDefinition, RevDataSourceOrReferenceDefinition } from './d
 import { RevDataSource } from './rev-data-source';
 import { RevReferenceableDataSource } from './rev-referenceable-data-source';
 import { RevReferenceableDataSourcesService } from './rev-referenceable-data-sources-service';
+import { RevApiError } from '@xilytix/revgrid';
 
 /** @public */
-export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
+export class RevDataSourceOrReference<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
     private readonly _referenceId: Guid | undefined;
     private readonly _dataSourceDefinition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
 
-    private _lockedDataSource: RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
-    private _lockedReferenceableDataSource: RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    private _lockedDataSource: RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
+    private _lockedReferenceableDataSource: RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
 
     constructor(
-        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
+        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined,
+        private readonly _referenceableDataSourcesService: RevReferenceableDataSourcesService<
+            Badness,
+            TableRecordSourceDefinitionTypeId,
+            TableFieldSourceDefinitionTypeId,
+            RenderValueTypeId,
+            RenderAttributeTypeId
+        > | undefined,
         private readonly _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
-        private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
-        private readonly _referenceableDataSourcesService: RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+        private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         definition: RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     ) {
         if (definition.referenceId !== undefined ) {
@@ -54,7 +61,7 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
 
     async tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevDataSourceOrReference.LockErrorIdPlusTryError>> {
         if (this._dataSourceDefinition !== undefined) {
-            const dataSource = new RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>(
+            const dataSource = new RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
                 this._referenceableColumnLayoutsService,
                 this._tableFieldSourceDefinitionFactory,
                 this._tableRecordSourceFactory,
@@ -72,19 +79,24 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
             }
         } else {
             if (this._referenceId !== undefined) {
-                const lockResult = await this._referenceableDataSourcesService.tryLockItemByKey(this._referenceId, locker);
-                if (lockResult.isErr()) {
-                    const lockErrorIdPlusTryError = lockResult.error;
-                    const errorId = RevDataSourceOrReference.LockError.fromRevDataSource(lockErrorIdPlusTryError.errorId, true);
-                    return new Err({ errorId, tryError: lockErrorIdPlusTryError.tryError });
+                const referenceableDataSourcesService = this._referenceableDataSourcesService;
+                if (referenceableDataSourcesService === undefined) {
+                    throw new RevApiError('RDSORTL50721', 'Undefined ReferenceableDataSourcesService');
                 } else {
-                    const referenceableDataSource = lockResult.value;
-                    if (referenceableDataSource === undefined) {
-                        return new Err({ errorId: RevDataSourceOrReference.LockErrorId.ReferenceableNotFound, tryError: undefined});
+                    const lockResult = await referenceableDataSourcesService.tryLockItemByKey(this._referenceId, locker);
+                    if (lockResult.isErr()) {
+                        const lockErrorIdPlusTryError = lockResult.error;
+                        const errorId = RevDataSourceOrReference.LockError.fromRevDataSource(lockErrorIdPlusTryError.errorId, true);
+                        return new Err({ errorId, tryError: lockErrorIdPlusTryError.tryError });
                     } else {
-                        this._lockedReferenceableDataSource = referenceableDataSource;
-                        this._lockedDataSource = referenceableDataSource;
-                        return new Ok(undefined);
+                        const referenceableDataSource = lockResult.value;
+                        if (referenceableDataSource === undefined) {
+                            return new Err({ errorId: RevDataSourceOrReference.LockErrorId.ReferenceableNotFound, tryError: undefined});
+                        } else {
+                            this._lockedReferenceableDataSource = referenceableDataSource;
+                            this._lockedDataSource = referenceableDataSource;
+                            return new Ok(undefined);
+                        }
                     }
                 }
             } else {
@@ -95,8 +107,13 @@ export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFi
 
     unlock(locker: LockOpenListItem.Locker) {
         if (this._lockedReferenceableDataSource !== undefined) {
-            this._referenceableDataSourcesService.unlockItem(this._lockedReferenceableDataSource, locker);
-            this._lockedReferenceableDataSource = undefined;
+            const referenceableDataSourcesService = this._referenceableDataSourcesService;
+            if (referenceableDataSourcesService === undefined) {
+                throw new RevApiError('RDSORU50721', 'Undefined ReferenceableDataSourcesService');
+            } else {
+                referenceableDataSourcesService.unlockItem(this._lockedReferenceableDataSource, locker);
+                this._lockedReferenceableDataSource = undefined;
+            }
         } else {
             if (this._lockedDataSource !== undefined) {
                 this._lockedDataSource.unlock(locker);

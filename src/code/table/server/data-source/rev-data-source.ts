@@ -15,10 +15,10 @@ import { RevTable } from '../table/internal-api';
 import { RevDataSourceDefinition } from './definition/internal-api';
 
 /** @public */
-export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
+export class RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     implements
         LockOpenListItem<
-            RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+            RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
             RevDataSource.LockErrorIdPlusTryError
         >,
         IndexedRecord {
@@ -29,7 +29,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     public index: number;
 
     private readonly _lockOpenManager: LockOpenManager<
-        RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+        RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         RevDataSource.LockErrorIdPlusTryError
     >;
 
@@ -37,18 +37,18 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     private _columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition | undefined;
     private _initialRowOrderDefinition: RevRecordRowOrderDefinition | undefined;
 
-    private _lockedTableRecordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    private _lockedTableRecordSource: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
     private _lockedColumnLayout: RevColumnLayout | undefined;
     private _lockedReferenceableColumnLayout: RevReferenceableColumnLayout | undefined;
 
-    private _table: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    private _table: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
 
     private _columnLayoutSetMultiEvent = new MultiEvent<RevDataSource.GridColumnSetEventHandler>();
 
     constructor(
-        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
+        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined,
         private readonly _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
-        private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+        private readonly _tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         definition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
         id?: Guid,
         mapKey?: MapKey,
@@ -57,7 +57,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         this.mapKey = mapKey ?? this.id;
 
         this._lockOpenManager = new LockOpenManager<
-            RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>,
+            RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>,
             RevDataSource.LockErrorIdPlusTryError
         >(
             (locker) => this.tryProcessFirstLock(locker),
@@ -103,7 +103,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
         return this._lockOpenManager.isLocked(ignoreOnlyLocker);
     }
 
-    equals(other: RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>): boolean {
+    equals(other: RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): boolean {
         return this.mapKey === other.mapKey;
     }
 
@@ -276,7 +276,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
             throw new AssertInternalError('GSOLT23008');
         } else {
             const tableFieldSourceDefinitionTypeIds = this.getTableFieldSourceDefinitionTypeIdsFromLayout(this._lockedColumnLayout);
-            this._table = new RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>(
+            this._table = new RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>(
                 this._lockedTableRecordSource,
                 this._tableRecordSourceFactory.createCorrectnessState(),
                 tableFieldSourceDefinitionTypeIds

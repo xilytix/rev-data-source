@@ -1,10 +1,10 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { BehavioredColumnSettings, BehavioredGridSettings, DataServer, LinedHoverCell, Revgrid, ViewCell } from '@xilytix/revgrid';
+import { BehavioredColumnSettings, BehavioredGridSettings, DataServer, DatalessSubgrid, LinedHoverCell, MetaModel, Revgrid, Subgrid, ViewCell } from '@xilytix/revgrid';
 import { AssertInternalError, Integer } from '@xilytix/sysutils';
 import { RevColumnLayoutGrid } from '../column-layout/internal-api';
 import { RevColumnLayout } from '../column-layout/server/internal-api';
-import { RevRecordDataServer, RevRecordFieldIndex, RevRecordIndex, RevRecordRowOrderDefinition, RevRecordSchemaServer, RevRecordSortDefinition, RevSourcedField } from './server/internal-api';
+import { RevAllowedSourcedField, RevAllowedSourcedFieldsColumnLayoutDefinition, RevRecordDataServer, RevRecordFieldIndex, RevRecordIndex, RevRecordRowOrderDefinition, RevRecordSchemaServer, RevRecordSortDefinition, RevRecordStore, RevSourcedField } from './server/internal-api';
 
 /** @public */
 export class RevRecordGrid<
@@ -32,11 +32,31 @@ export class RevRecordGrid<
 
     constructor(
         gridHostElement: HTMLElement,
-        definition: Revgrid.Definition<BCS, SF>,
+        recordStore: RevRecordStore,
+        getMainCellPainterEventer: Subgrid.GetCellPainterEventer<BCS, SF>,
+        extraSubgridDefinitions: Subgrid.Definition<BCS, SF>[],
         settings: BGS,
         customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, SF>,
         options?: Revgrid.Options<BGS, BCS, SF>,
+        mainSubgridDefinitionOptions?: RevRecordGrid.MainSubgridDefinitionOptions,
     ) {
+        const schemaServer = new RevRecordSchemaServer<SF>();
+        const mainDataServer = new RevRecordDataServer(schemaServer, recordStore);
+
+        const definition: Revgrid.Definition<BCS, SF> = {
+            schemaServer,
+            subgrids: [
+                {
+                    role: DatalessSubgrid.RoleEnum.main,
+                    dataServer: mainDataServer,
+                    getCellPainterEventer: getMainCellPainterEventer,
+                    ...mainSubgridDefinitionOptions,
+                },
+                ...extraSubgridDefinitions,
+            ],
+        }
+
+
         super(gridHostElement, definition, settings, customiseSettingsForNewColumnEventer, options);
 
         const subgridsManager = this.subgridsManager;
@@ -263,6 +283,11 @@ export class RevRecordGrid<
         return this.mainDataServer.sortByMany(specifiers);
     }
 
+    createAllowedSourcedFieldsColumnLayoutDefinition(allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[]) {
+        const definitionColumns = this.createColumnLayoutDefinitionColumns();
+        return new RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>(definitionColumns, allowedFields, this.settings.fixedColumnCount);
+    }
+
     protected override areFieldsAllowed() {
         return this._allowedFields !== undefined;
     }
@@ -412,4 +437,11 @@ export namespace RevRecordGrid {
         SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>
     > = (this: void, dataServers: DataServer<SF>[]) => void;
     export type FieldSortedEventer = (this: void) => void;
+
+    export interface MainSubgridDefinitionOptions {
+        selectable?: boolean;
+        defaultRowHeight?: number;
+        rowPropertiesCanSpecifyRowHeight?: boolean;
+        rowPropertiesPrototype?: MetaModel.RowPropertiesPrototype;
+    }
 }

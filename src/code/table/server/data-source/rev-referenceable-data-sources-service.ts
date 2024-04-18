@@ -6,14 +6,14 @@ import { RevDataSource } from './rev-data-source';
 import { RevReferenceableDataSource } from './rev-referenceable-data-source';
 
 /** @public */
-export interface RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
+export interface RevReferenceableDataSourcesService<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     extends LockItemByKeyList<
         RevReferenceableDataSource<
+            Badness,
             TableRecordSourceDefinitionTypeId,
             TableFieldSourceDefinitionTypeId,
             RenderValueTypeId,
-            RenderAttributeTypeId,
-            Badness
+            RenderAttributeTypeId
         >,
         RevDataSource.LockErrorIdPlusTryError
     > {
@@ -22,7 +22,7 @@ export interface RevReferenceableDataSourcesService<TableRecordSourceDefinitionT
 
     getOrNew(
         definition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
-    ): RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    ): RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
 
     // save(): void;
     // checkSave(onlyIfPeriodicRequired: boolean): void;

@@ -1,5 +1,6 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
+import { RevApiError } from '@xilytix/revgrid';
 import { AssertInternalError, Err, Guid, LockOpenListItem, Ok, Result } from '@xilytix/sysutils';
 import {
     RevColumnLayoutDefinition,
@@ -18,7 +19,7 @@ export class RevColumnLayoutOrReference {
     private _lockedReferenceableColumnLayout: RevReferenceableColumnLayout | undefined;
 
     constructor(
-        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService,
+        private readonly _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined,
         definition: RevColumnLayoutOrReferenceDefinition,
     ) {
         if (definition.referenceId !== undefined) {
@@ -73,26 +74,31 @@ export class RevColumnLayoutOrReference {
             );
         } else {
             if (this._referenceId !== undefined) {
-                const lockPromise = this._referenceableColumnLayoutsService.tryLockItemByKey(this._referenceId, locker);
-                lockPromise.then(
-                    (lockResult) => {
-                        if (lockResult.isErr()) {
-                            const err = new Err({ errorId: RevColumnLayoutOrReference.LockErrorId.ReferenceTry, tryError: lockResult.error });
-                            resolve(err);
-                        } else {
-                            const referenceableColumnLayout = lockResult.value;
-                            if (referenceableColumnLayout === undefined) {
-                                const err = new Err({ errorId: RevColumnLayoutOrReference.LockErrorId.ReferenceNotFound, tryError: undefined });
+                const referenceableColumnLayoutsService = this._referenceableColumnLayoutsService;
+                if (referenceableColumnLayoutsService === undefined) {
+                    throw new RevApiError('RCLORTL50113', 'Undefined referenceableColumnLayoutsService');
+                } else {
+                    const lockPromise = referenceableColumnLayoutsService.tryLockItemByKey(this._referenceId, locker);
+                    lockPromise.then(
+                        (lockResult) => {
+                            if (lockResult.isErr()) {
+                                const err = new Err({ errorId: RevColumnLayoutOrReference.LockErrorId.ReferenceTry, tryError: lockResult.error });
                                 resolve(err);
                             } else {
-                                this._lockedReferenceableColumnLayout = referenceableColumnLayout;
-                                this._lockedColumnLayout = referenceableColumnLayout;
-                                resolve(new Ok(undefined));
+                                const referenceableColumnLayout = lockResult.value;
+                                if (referenceableColumnLayout === undefined) {
+                                    const err = new Err({ errorId: RevColumnLayoutOrReference.LockErrorId.ReferenceNotFound, tryError: undefined });
+                                    resolve(err);
+                                } else {
+                                    this._lockedReferenceableColumnLayout = referenceableColumnLayout;
+                                    this._lockedColumnLayout = referenceableColumnLayout;
+                                    resolve(new Ok(undefined));
+                                }
                             }
-                        }
-                    },
-                    (reason) => { throw AssertInternalError.createIfNotError(reason, 'RGLORTL54441'); }
-                );
+                        },
+                        (reason) => { throw AssertInternalError.createIfNotError(reason, 'RGLORTL54441'); }
+                    );
+                }
             } else {
                 throw new AssertInternalError('GLDONRTLU24498');
             }
@@ -103,12 +109,17 @@ export class RevColumnLayoutOrReference {
 
     unlock(locker: LockOpenListItem.Locker) {
         if (this._lockedColumnLayout === undefined) {
-            throw new AssertInternalError('GLDONRUU23366');
+            throw new AssertInternalError('RCLORUL23366');
         } else {
             this._lockedColumnLayout = undefined;
             if (this._lockedReferenceableColumnLayout !== undefined) {
-                this._referenceableColumnLayoutsService.unlockItem(this._lockedReferenceableColumnLayout, locker);
-                this._lockedReferenceableColumnLayout = undefined;
+                const referenceableColumnLayoutsService = this._referenceableColumnLayoutsService;
+                if (referenceableColumnLayoutsService === undefined) {
+                    throw new RevApiError('RCLORUS50113', 'Undefined referenceableColumnLayoutsService');
+                } else {
+                    referenceableColumnLayoutsService.unlockItem(this._lockedReferenceableColumnLayout, locker);
+                    this._lockedReferenceableColumnLayout = undefined;
+                }
             }
         }
     }

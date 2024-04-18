@@ -20,6 +20,7 @@ import { LinedHoverCell } from '@xilytix/revgrid';
 import { LockItemByKeyList } from '@xilytix/sysutils';
 import { LockOpenListItem } from '@xilytix/sysutils';
 import { MapKey } from '@xilytix/sysutils';
+import { MetaModel } from '@xilytix/revgrid';
 import { MultiEvent } from '@xilytix/sysutils';
 import { NamedLocker } from '@xilytix/sysutils';
 import { NamedOpener } from '@xilytix/sysutils';
@@ -29,6 +30,7 @@ import { RevListChangedEventer } from '@xilytix/revgrid';
 import { RevListChangedTypeId } from '@xilytix/revgrid';
 import { SchemaField } from '@xilytix/revgrid';
 import { SchemaServer } from '@xilytix/revgrid';
+import { Subgrid } from '@xilytix/revgrid';
 import { UnreachableCaseInternalError } from '@xilytix/sysutils';
 import { UsableListChangeTypeId } from '@xilytix/sysutils';
 import { ViewCell } from '@xilytix/revgrid';
@@ -332,6 +334,8 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
     // (undocumented)
     createColumnLayoutDefinition(): RevColumnLayoutDefinition;
     // (undocumented)
+    createColumnLayoutDefinitionColumns(): RevColumnLayoutDefinition.Column[];
+    // (undocumented)
     protected descendantProcessActiveColumnListChanged(typeId: RevListChangedTypeId, index: number, count: number, targetIndex: number | undefined, ui: boolean): void;
     // (undocumented)
     protected descendantProcessColumnsWidthChanged(columns: Column<BCS, SF>[], ui: boolean): void;
@@ -347,7 +351,7 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
 
 // @public (undocumented)
 export class RevColumnLayoutOrReference {
-    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, definition: RevColumnLayoutOrReferenceDefinition);
+    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined, definition: RevColumnLayoutOrReferenceDefinition);
     // (undocumented)
     createDefinition(): RevColumnLayoutOrReferenceDefinition;
     // (undocumented)
@@ -422,8 +426,8 @@ export namespace RevColumnLayoutOrReferenceDefinition {
 }
 
 // @public (undocumented)
-export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements LockOpenListItem<RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
-    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, definition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, id?: Guid, mapKey?: MapKey);
+export class RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements LockOpenListItem<RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
+    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, definition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, id?: Guid, mapKey?: MapKey);
     // (undocumented)
     closeLocked(opener: LockOpenListItem.Opener): void;
     // (undocumented)
@@ -433,7 +437,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     // (undocumented)
     createTableRecordSourceDefinition(): RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
-    equals(other: RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>): boolean;
+    equals(other: RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): boolean;
     // (undocumented)
     readonly id: Guid;
     // (undocumented)
@@ -449,7 +453,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     // (undocumented)
     get lockedReferenceableColumnLayout(): RevReferenceableColumnLayout | undefined;
     // (undocumented)
-    get lockedTableRecordSource(): RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    get lockedTableRecordSource(): RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
     // (undocumented)
     get lockers(): readonly LockOpenListItem.Locker[];
     // (undocumented)
@@ -463,7 +467,7 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     // (undocumented)
     subscribeColumnLayoutSetEvent(handler: RevDataSource.GridColumnSetEventHandler): number;
     // (undocumented)
-    get table(): RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    get table(): RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
     // (undocumented)
     tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevDataSource.LockErrorIdPlusTryError>>;
     tryOpenColumnLayoutOrReferenceDefinition(definition: RevColumnLayoutOrReferenceDefinition, opener: LockOpenListItem.Opener): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>>;
@@ -588,14 +592,14 @@ export namespace RevDataSourceDefinition {
 }
 
 // @public (undocumented)
-export class RevDataSourceOrReference<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
-    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, _referenceableDataSourcesService: RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, definition: RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>);
+export class RevDataSourceOrReference<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
+    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined, _referenceableDataSourcesService: RevReferenceableDataSourcesService<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, definition: RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>);
     // (undocumented)
     createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition | undefined): RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
-    get lockedDataSource(): RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    get lockedDataSource(): RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
     // (undocumented)
-    get lockedReferenceableDataSource(): RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    get lockedReferenceableDataSource(): RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
     // (undocumented)
     tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevDataSourceOrReference.LockErrorIdPlusTryError>>;
     // (undocumented)
@@ -1000,7 +1004,7 @@ export abstract class RevRecordFunctionizeField implements RevRecordField {
 
 // @public (undocumented)
 export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>> extends RevColumnLayoutGrid<BGS, BCS, SF> {
-    constructor(gridHostElement: HTMLElement, definition: Revgrid.Definition<BCS, SF>, settings: BGS, customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, SF>, options?: Revgrid.Options<BGS, BCS, SF>);
+    constructor(gridHostElement: HTMLElement, recordStore: RevRecordStore, getMainCellPainterEventer: Subgrid.GetCellPainterEventer<BCS, SF>, extraSubgridDefinitions: Subgrid.Definition<BCS, SF>[], settings: BGS, customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, SF>, options?: Revgrid.Options<BGS, BCS, SF>, mainSubgridDefinitionOptions?: RevRecordGrid.MainSubgridDefinitionOptions);
     // (undocumented)
     applyFilter(filter?: RevRecordDataServer.RecordFilterCallback): void;
     // (undocumented)
@@ -1016,6 +1020,8 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     // (undocumented)
     get continuousFiltering(): boolean;
     set continuousFiltering(value: boolean);
+    // (undocumented)
+    createAllowedSourcedFieldsColumnLayoutDefinition(allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[]): RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<RenderValueTypeId, RenderAttributeTypeId, SF> | undefined;
     // (undocumented)
@@ -1124,6 +1130,17 @@ export namespace RevRecordGrid {
     export type MainClickEventer = (this: void, fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex) => void;
     // (undocumented)
     export type MainDblClickEventer = (this: void, fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex) => void;
+    // (undocumented)
+    export interface MainSubgridDefinitionOptions {
+        // (undocumented)
+        defaultRowHeight?: number;
+        // (undocumented)
+        rowPropertiesCanSpecifyRowHeight?: boolean;
+        // (undocumented)
+        rowPropertiesPrototype?: MetaModel.RowPropertiesPrototype;
+        // (undocumented)
+        selectable?: boolean;
+    }
     // (undocumented)
     export type RecordFocusEventer = (this: void, newRecordIndex: RevRecordIndex | undefined, oldRecordIndex: RevRecordIndex | undefined) => void;
     // (undocumented)
@@ -1432,8 +1449,8 @@ export interface RevReferenceableColumnLayoutsService extends LockItemByKeyList<
 }
 
 // @public (undocumented)
-export class RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> extends RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements LockOpenListItem<RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
-    constructor(referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, lockedDefinition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, index: number);
+export class RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> extends RevDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements LockOpenListItem<RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
+    constructor(referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined, tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, lockedDefinition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, index: number);
     // (undocumented)
     createDefinition(rowOrderDefinition: RevRecordRowOrderDefinition): RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
@@ -1504,9 +1521,9 @@ export interface RevReferenceableDataSourceDefinitionsStoreService {
 }
 
 // @public (undocumented)
-export interface RevReferenceableDataSourcesService<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> extends LockItemByKeyList<RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, RevDataSource.LockErrorIdPlusTryError> {
+export interface RevReferenceableDataSourcesService<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> extends LockItemByKeyList<RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, RevDataSource.LockErrorIdPlusTryError> {
     // (undocumented)
-    getOrNew(definition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): RevReferenceableDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    getOrNew(definition: RevReferenceableDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): RevReferenceableDataSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
 }
 
 // @public (undocumented)
@@ -1670,8 +1687,8 @@ export class RevSourcedFieldSourceDefinition {
 }
 
 // @public (undocumented)
-export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
-    constructor(recordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, _correctnessState: CorrectnessState<Badness>, initialActiveFieldSources: readonly TableFieldSourceDefinitionTypeId[]);
+export class RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
+    constructor(recordSource: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _correctnessState: CorrectnessState<Badness>, initialActiveFieldSources: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
     get badness(): Badness;
     // (undocumented)
@@ -1697,7 +1714,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     // (undocumented)
     get records(): readonly RevTableRecord<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
-    readonly recordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    readonly recordSource: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     setActiveFieldSources(fieldSourceTypeIds: readonly TableFieldSourceDefinitionTypeId[], suppressGridSchemaUpdate: boolean): void;
     // (undocumented)
@@ -1713,7 +1730,7 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     // (undocumented)
     subscribeOpenChangeEvent(handler: RevTable.OpenChangeEventHandler): number;
     // (undocumented)
-    subscribeOpenEvent(handler: RevTable.OpenEventHandler<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>): number;
+    subscribeOpenEvent(handler: RevTable.OpenEventHandler<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): number;
     // (undocumented)
     subscribeRecordChangedEvent(handler: RevTable.RecordChangedEventHandler): number;
     // (undocumented)
@@ -1829,7 +1846,7 @@ export namespace RevTable {
     // (undocumented)
     export type OpenChangeEventHandler = (this: void, opened: boolean) => void;
     // (undocumented)
-    export type OpenEventHandler<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (this: void, recordDefinitionList: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) => void;
+    export type OpenEventHandler<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (this: void, recordDefinitionList: RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) => void;
     // (undocumented)
     export type RecordChangedEventHandler = (this: void, recordIdx: Integer) => void;
     // (undocumented)
@@ -2032,7 +2049,7 @@ export namespace RevTableRecordDefinition {
 }
 
 // @public (undocumented)
-export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements CorrectnessState<Badness> {
+export abstract class RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements CorrectnessState<Badness> {
     constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _gridFieldCustomHeadingsService: RevSourcedFieldCustomHeadingsService, _tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _correctnessState: CorrectnessState<Badness>, definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, allowedFieldSourceDefinitionTypeIds: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
     get activeFieldSources(): readonly RevTableFieldSource<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>[];
@@ -2127,11 +2144,11 @@ export namespace RevTableRecordSource {
     // (undocumented)
     export type badnessChangedEventHandler = (this: void) => void;
     // (undocumented)
-    export type FactoryClosure<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (this: void, definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) => RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    export type FactoryClosure<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (this: void, definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) => RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     export type ListChangeEventHandler = (this: void, listChangeTypeId: UsableListChangeTypeId, itemIdx: Integer, itemCount: Integer) => void;
     // (undocumented)
-    export type ModifiedEventHandler<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (this: void, list: RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) => void;
+    export type ModifiedEventHandler<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (this: void, list: RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) => void;
     // (undocumented)
     export type RecDefinitionChangeEventHandler = (this: void, itemIdx: Integer) => void;
     // (undocumented)
@@ -2172,15 +2189,15 @@ export interface RevTableRecordSourceDefinitionFromJsonFactory<TypeId, TableFiel
 }
 
 // @public (undocumented)
-export interface RevTableRecordSourceFactory<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
+export interface RevTableRecordSourceFactory<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> {
     // (undocumented)
-    create(definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    create(definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     createCorrectnessState(): CorrectnessState<Badness>;
 }
 
 // @public (undocumented)
-export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements RevRecordStore {
+export class RevTableRecordStore<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements RevRecordStore {
     // (undocumented)
     allRecordsDeleted(): void;
     // (undocumented)
@@ -2208,9 +2225,9 @@ export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSo
     // (undocumented)
     setRecordEventers(recordsEventers: RevRecordStore.RecordsEventers): void;
     // (undocumented)
-    setTable(value: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>): void;
+    setTable(value: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>): void;
     // (undocumented)
-    get table(): RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+    get table(): RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
 }
 
 // @public (undocumented)

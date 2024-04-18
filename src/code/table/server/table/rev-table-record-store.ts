@@ -10,8 +10,8 @@ import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevReco
 import { RevTable } from './rev-table';
 
 /** @public */
-export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements RevRecordStore {
-    private _table: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
+export class RevTableRecordStore<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements RevRecordStore {
+    private _table: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined;
 
     private _recordsEventers: RevRecordStore.RecordsEventers;
 
@@ -30,7 +30,7 @@ export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSo
         return this._table === undefined ? 0 : this._table.recordCount;
     }
 
-    setTable(value: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) {
+    setTable(value: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) {
         if (this._table !== undefined) {
             this.unbindTable(this._table);
             this._recordsEventers.allRecordsDeleted(); // should already be done
@@ -94,7 +94,7 @@ export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSo
         this._recordsEventers.invalidateRecord(recordIndex);
     }
 
-    private bindTable(table: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) {
+    private bindTable(table: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) {
         this._allRecordsDeletedSubscriptionId = table.subscribeAllRecordsDeletedEvent(() => { this._recordsEventers.allRecordsDeleted(); });
         this._recordsLoadedSubscriptionId = table.subscribeRecordsLoadedEvent(() => { this._recordsEventers.recordsLoaded(); });
         this._recordsInsertedSubscriptionId = table.subscribeRecordsInsertedEvent(
@@ -120,7 +120,7 @@ export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSo
         );
     }
 
-    private unbindTable(table: RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>) {
+    private unbindTable(table: RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>) {
         table.unsubscribeAllRecordsDeletedEvent(this._allRecordsDeletedSubscriptionId);
         this._allRecordsDeletedSubscriptionId = undefined;
         table.unsubscribeRecordsLoadedEvent(this._recordsLoadedSubscriptionId);

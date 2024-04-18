@@ -19,6 +19,24 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
         return new RevColumnLayoutDefinition(definitionColumns);
     }
 
+    createColumnLayoutDefinitionColumns() {
+        const activeColumns = this.activeColumns;
+        const activeCount = activeColumns.length;
+        const definitionColumns = new Array<RevColumnLayoutDefinition.Column>(activeCount);
+
+        for (let i = 0; i < activeCount; i++) {
+            const activeColumn = activeColumns[i];
+            const autoSizableWidth = activeColumn.autoSizing ? undefined : activeColumn.width;
+            const definitionColumn: RevColumnLayoutDefinition.Column = {
+                fieldName: activeColumn.field.name,
+                visible: true,
+                autoSizableWidth,
+            };
+            definitionColumns[i] = definitionColumn;
+        }
+        return definitionColumns;
+    }
+
     updateColumnLayout(value: RevColumnLayout) {
         if (value !== this._columnLayout) {
             if (this._columnLayout !== undefined) {
@@ -141,24 +159,6 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
                 this._columnLayout.endChange();
             }
         }
-    }
-
-    private createColumnLayoutDefinitionColumns() {
-        const activeColumns = this.activeColumns;
-        const activeCount = activeColumns.length;
-        const definitionColumns = new Array<RevColumnLayoutDefinition.Column>(activeCount);
-
-        for (let i = 0; i < activeCount; i++) {
-            const activeColumn = activeColumns[i];
-            const autoSizableWidth = activeColumn.autoSizing ? undefined : activeColumn.width;
-            const definitionColumn: RevColumnLayoutDefinition.Column = {
-                fieldName: activeColumn.field.name,
-                visible: true,
-                autoSizableWidth,
-            };
-            definitionColumns[i] = definitionColumn;
-        }
-        return definitionColumns;
     }
 
     private processColumnLayoutChangedEvent(initiator: RevColumnLayout.ChangeInitiator) {

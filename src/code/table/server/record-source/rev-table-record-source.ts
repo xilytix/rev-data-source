@@ -20,7 +20,7 @@ import { RevTableRecord } from '../record/internal-api';
 import { RevTableRecordSourceDefinition } from './definition/internal-api';
 
 /** @public */
-export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements CorrectnessState<Badness> {
+export abstract class RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> implements CorrectnessState<Badness> {
     private _activeFieldSources: readonly RevTableFieldSource<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>[] = [];
     private _fields: readonly RevTableField<RenderValueTypeId, RenderAttributeTypeId>[] = [];
 
@@ -240,10 +240,10 @@ export abstract class RevTableRecordSource<TypeId, TableFieldSourceDefinitionTyp
 
 /** @public */
 export namespace RevTableRecordSource {
-    export type FactoryClosure<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (
+    export type FactoryClosure<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (
         this: void,
         definition: RevTableRecordSourceDefinition<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
-    ) => RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>;
+    ) => RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
 
     export type ListChangeEventHandler = (
         this: void,
@@ -253,9 +253,9 @@ export namespace RevTableRecordSource {
     ) => void;
     export type RecDefinitionChangeEventHandler = (this: void, itemIdx: Integer) => void;
     export type badnessChangedEventHandler = (this: void) => void;
-    export type ModifiedEventHandler<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> = (
+    export type ModifiedEventHandler<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> = (
         this: void,
-        list: RevTableRecordSource<TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>
+        list: RevTableRecordSource<Badness, TypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>
     ) => void;
     export type RequestIsGroupSaveEnabledEventHandler = (this: void) => boolean;
 
