@@ -13,13 +13,6 @@
   ],
 
   "references": [
-    { "path": "./record/tsconfig.json" },
-    { "path": "./record-source/tsconfig.json" },
-    { "path": "./record-definition/tsconfig.json" },
-    { "path": "./field-source/tsconfig.json" },
-    { "path": "./value-source/tsconfig.json" },
-    { "path": "./field/tsconfig.json" },
-    { "path": "./value/tsconfig.json" },
-    { "path": "../record/server/tsconfig.json" },
+    { "path": "./server/tsconfig.json" },
   ]
 }

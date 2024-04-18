@@ -54,6 +54,7 @@
         "@typescript-eslint/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
         "@typescript-eslint/naming-convention": ["error", { "selector": "enumMember", "format": null }],
         "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/restrict-template-expressions": ["error", { "allowNumber": true }],
         "@typescript-eslint/no-invalid-void-type": ["warn", { "allowAsThisParameter": true }],
         "@typescript-eslint/prefer-nullish-coalescing": ["warn", { "ignoreTernaryTests": true }],
         "@typescript-eslint/member-ordering": [

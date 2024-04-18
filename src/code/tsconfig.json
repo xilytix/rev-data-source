@@ -13,7 +13,6 @@
   ],
 
   "references": [
-    { "path": "./data-source/tsconfig.json" },
     { "path": "./table/tsconfig.json" },
     { "path": "./column-layout/tsconfig.json" },
     { "path": "./record/tsconfig.json" },

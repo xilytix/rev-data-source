@@ -14,6 +14,7 @@ import { HorizontalAlign } from '@xilytix/revgrid';
 import { HorizontalAlignEnum } from '@xilytix/revgrid';
 import { IndexedRecord } from '@xilytix/sysutils';
 import { Integer } from '@xilytix/sysutils';
+import { InternalError } from '@xilytix/sysutils';
 import { JsonElement } from '@xilytix/sysutils';
 import { LinedHoverCell } from '@xilytix/revgrid';
 import { LockItemByKeyList } from '@xilytix/sysutils';
@@ -28,8 +29,297 @@ import { RevListChangedEventer } from '@xilytix/revgrid';
 import { RevListChangedTypeId } from '@xilytix/revgrid';
 import { SchemaField } from '@xilytix/revgrid';
 import { SchemaServer } from '@xilytix/revgrid';
+import { UnreachableCaseInternalError } from '@xilytix/sysutils';
 import { UsableListChangeTypeId } from '@xilytix/sysutils';
 import { ViewCell } from '@xilytix/revgrid';
+
+// @public (undocumented)
+export class RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> {
+    // (undocumented)
+    getViewValue(_record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
+}
+
+// @public (undocumented)
+export class RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId> extends RevColumnLayoutDefinition {
+    constructor(columns: readonly RevColumnLayoutDefinition.Column[], allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[], fixedColumnCount: Integer);
+    // (undocumented)
+    readonly allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
+    // (undocumented)
+    readonly fixedColumnCount: Integer;
+}
+
+// @public
+export class RevColumnLayout implements LockOpenListItem<RevColumnLayout>, IndexedRecord {
+    constructor(definition?: RevColumnLayoutDefinition, id?: Guid, mapKey?: MapKey);
+    // (undocumented)
+    addColumn(initiator: RevColumnLayout.ChangeInitiator, columnOrName: string | RevColumnLayoutDefinition.Column): void;
+    // (undocumented)
+    addColumns(initiator: RevColumnLayout.ChangeInitiator, columnsNames: (string | RevColumnLayoutDefinition.Column)[]): void;
+    // (undocumented)
+    applyDefinition(initiator: RevColumnLayout.ChangeInitiator, definition: RevColumnLayoutDefinition): void;
+    // (undocumented)
+    protected assign(other: RevColumnLayout): void;
+    // (undocumented)
+    beginChange(initiator: RevColumnLayout.ChangeInitiator): void;
+    // (undocumented)
+    clearColumns(initiator: RevColumnLayout.ChangeInitiator): void;
+    // (undocumented)
+    closeLocked(opener: LockOpenListItem.Opener): void;
+    // (undocumented)
+    get columnCount(): number;
+    // (undocumented)
+    get columns(): readonly RevColumnLayout.Column[];
+    // (undocumented)
+    createCopy(): RevColumnLayout;
+    // (undocumented)
+    createDefinition(): RevColumnLayoutDefinition;
+    // (undocumented)
+    protected createDefinitionColumns(): RevColumnLayoutDefinition.Column[];
+    // (undocumented)
+    endChange(): void;
+    // (undocumented)
+    equals(other: RevColumnLayout): boolean;
+    // (undocumented)
+    findColumn(fieldName: string): RevColumnLayout.Column | undefined;
+    // (undocumented)
+    getColumn(columnIndex: number): RevColumnLayout.Column;
+    // (undocumented)
+    readonly id: Guid;
+    // (undocumented)
+    index: number;
+    // (undocumented)
+    indexOfColumn(column: RevColumnLayout.Column): number;
+    // (undocumented)
+    indexOfColumnByFieldName(fieldName: string): number;
+    // (undocumented)
+    insertColumns(initiator: RevColumnLayout.ChangeInitiator, index: Integer, columnOrFieldNames: (string | RevColumnLayoutDefinition.Column)[]): void;
+    // (undocumented)
+    isLocked(ignoreOnlyLocker: LockOpenListItem.Locker | undefined): boolean;
+    // (undocumented)
+    get lockCount(): number;
+    // (undocumented)
+    get lockers(): readonly LockOpenListItem.Locker[];
+    // (undocumented)
+    readonly mapKey: MapKey;
+    // (undocumented)
+    moveColumn(initiator: RevColumnLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer): boolean;
+    // (undocumented)
+    moveColumns(initiator: RevColumnLayout.ChangeInitiator, fromColumnIndex: Integer, toColumnIndex: Integer, count: Integer): boolean;
+    // (undocumented)
+    get openCount(): number;
+    // (undocumented)
+    get openers(): readonly LockOpenListItem.Opener[];
+    // (undocumented)
+    openLocked(opener: LockOpenListItem.Opener): void;
+    // (undocumented)
+    removeColumn(initiator: RevColumnLayout.ChangeInitiator, index: Integer): void;
+    // (undocumented)
+    removeColumns(initiator: RevColumnLayout.ChangeInitiator, index: Integer, count: Integer): void;
+    // (undocumented)
+    setColumns(initiator: RevColumnLayout.ChangeInitiator, columns: readonly RevColumnLayout.Column[]): void;
+    // (undocumented)
+    setColumnWidth(initiator: RevColumnLayout.ChangeInitiator, fieldName: string, width: Integer | undefined): void;
+    // (undocumented)
+    subscribeChangedEvent(handler: RevColumnLayout.ChangedEventHandler): number;
+    // (undocumented)
+    subscribeWidthsChangedEvent(handler: RevColumnLayout.WidthsChangedEventHandler): number;
+    // (undocumented)
+    tryLock(locker: LockOpenListItem.Locker): Promise<Result<void>>;
+    // (undocumented)
+    unlock(locker: LockOpenListItem.Locker): void;
+    // (undocumented)
+    unsubscribeChangedEvent(subscriptionId: MultiEvent.SubscriptionId): void;
+    // (undocumented)
+    unsubscribeWidthsChangedEvent(subscriptionId: MultiEvent.SubscriptionId): void;
+}
+
+// @public (undocumented)
+export namespace RevColumnLayout {
+    // (undocumented)
+    export type ChangedEventHandler = (this: void, initiator: ChangeInitiator) => void;
+    // (undocumented)
+    export interface ChangeInitiator {
+    }
+    // (undocumented)
+    export interface Column {
+        // (undocumented)
+        autoSizableWidth: Integer | undefined;
+        // (undocumented)
+        fieldName: string;
+        // (undocumented)
+        visible: boolean | undefined;
+    }
+    // (undocumented)
+    export namespace Column {
+        // (undocumented)
+        export function createCopy(column: Column): Column;
+    }
+    // (undocumented)
+    export interface Locker {
+        // (undocumented)
+        lockerName: string;
+    }
+    const // (undocumented)
+    forceChangeInitiator: ChangeInitiator;
+    // (undocumented)
+    export type WidthsChangedEventHandler = (this: void, initiator: ChangeInitiator) => void;
+}
+
+// @public (undocumented)
+export namespace RevColumnLayoutChange {
+    // (undocumented)
+    export type Action = MoveUp | MoveTop | MoveDown | MoveBottom | SetVisible | SetWidth;
+    // (undocumented)
+    export interface ActionBase {
+        // (undocumented)
+        id: ActionId;
+    }
+    // (undocumented)
+    export enum ActionId {
+        // (undocumented)
+        MoveBottom = 3,
+        // (undocumented)
+        MoveDown = 2,
+        // (undocumented)
+        MoveTop = 1,
+        // (undocumented)
+        MoveUp = 0,
+        // (undocumented)
+        SetVisible = 4,
+        // (undocumented)
+        SetWidth = 5
+    }
+    // (undocumented)
+    export interface MoveBottom extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.MoveBottom;
+    }
+    // (undocumented)
+    export interface MoveDown extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.MoveDown;
+    }
+    // (undocumented)
+    export interface MoveTop extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.MoveTop;
+    }
+    // (undocumented)
+    export interface MoveUp extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.MoveUp;
+    }
+    // (undocumented)
+    export interface SetVisible extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.SetVisible;
+        // (undocumented)
+        visible: boolean;
+    }
+    // (undocumented)
+    export interface SetWidth extends ActionBase {
+        // (undocumented)
+        columnIndex: Integer;
+        // (undocumented)
+        id: ActionId.SetWidth;
+        // (undocumented)
+        width: Integer;
+    }
+}
+
+// @public (undocumented)
+export class RevColumnLayoutDefinition {
+    constructor(columns: readonly RevColumnLayoutDefinition.Column[], columnCreateErrorCount?: number);
+    // (undocumented)
+    get columnCount(): number;
+    // (undocumented)
+    readonly columnCreateErrorCount: number;
+    // (undocumented)
+    readonly columns: readonly RevColumnLayoutDefinition.Column[];
+    // (undocumented)
+    createCopy(): RevColumnLayoutDefinition;
+    // (undocumented)
+    saveToJson(element: JsonElement): void;
+}
+
+// @public (undocumented)
+export namespace RevColumnLayoutDefinition {
+    // (undocumented)
+    export interface Column {
+        // (undocumented)
+        readonly autoSizableWidth: Integer | undefined;
+        // (undocumented)
+        readonly fieldName: string;
+        // (undocumented)
+        readonly visible: boolean | undefined;
+    }
+    // (undocumented)
+    export namespace Column {
+    }
+    // (undocumented)
+    export namespace Column {
+        // (undocumented)
+        export function createCopy(column: Column): Column;
+        // (undocumented)
+        export namespace JsonTag {
+            const // (undocumented)
+            fieldName = "fieldName";
+            const // (undocumented)
+            name = "name";
+            const // (undocumented)
+            visible = "visible";
+            const // (undocumented)
+            show = "show";
+            const // (undocumented)
+            width = "width";
+        }
+        // (undocumented)
+        export function saveToJson(column: Column, element: JsonElement): void;
+        // (undocumented)
+        export function tryCreateFromJson(element: JsonElement): Column | undefined;
+    }
+    // (undocumented)
+    export interface ColumnsCreatedFromJson {
+        // (undocumented)
+        readonly columnCreateErrorCount: Integer;
+        // (undocumented)
+        readonly columns: RevColumnLayoutDefinition.Column[];
+    }
+    // (undocumented)
+    export function createColumnsFromFieldNames(fieldNames: readonly string[]): Column[];
+    // (undocumented)
+    export function createFromFieldNames(fieldNames: readonly string[]): RevColumnLayoutDefinition;
+    // (undocumented)
+    export const enum CreateFromJsonErrorId {
+        // (undocumented)
+        AllColumnElementsAreInvalid = 3,
+        // (undocumented)
+        ColumnElementIsNotAnObject = 2,
+        // (undocumented)
+        ColumnsElementIsNotAnArray = 1,
+        // (undocumented)
+        ColumnsElementIsNotDefined = 0
+    }
+    // (undocumented)
+    export namespace JsonName {
+        const // (undocumented)
+        columns = "revColumns";
+    }
+    // (undocumented)
+    export function tryCreateColumnsFromJson(element: JsonElement): Result<ColumnsCreatedFromJson, CreateFromJsonErrorId>;
+    // (undocumented)
+    export function tryCreateFromJson(element: JsonElement): Result<RevColumnLayoutDefinition, CreateFromJsonErrorId>;
+}
 
 // @public (undocumented)
 export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends SchemaField> extends Revgrid<BGS, BCS, SF> {
@@ -37,12 +327,8 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
     applyColumnLayoutDefinition(value: RevColumnLayoutDefinition): void;
     // (undocumented)
     protected areFieldsAllowed(): boolean;
-    // Warning: (ae-forgotten-export) The symbol "RevColumnLayout" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     get columnLayout(): RevColumnLayout | undefined;
-    // Warning: (ae-forgotten-export) The symbol "RevColumnLayoutDefinition" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     createColumnLayoutDefinition(): RevColumnLayoutDefinition;
     // (undocumented)
@@ -60,13 +346,86 @@ export class RevColumnLayoutGrid<BGS extends BehavioredGridSettings, BCS extends
 }
 
 // @public (undocumented)
+export class RevColumnLayoutOrReference {
+    constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, definition: RevColumnLayoutOrReferenceDefinition);
+    // (undocumented)
+    createDefinition(): RevColumnLayoutOrReferenceDefinition;
+    // (undocumented)
+    get lockedColumnLayout(): RevColumnLayout | undefined;
+    // (undocumented)
+    get lockedReferenceableColumnLayout(): RevReferenceableColumnLayout | undefined;
+    // (undocumented)
+    tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>>;
+    // (undocumented)
+    unlock(locker: LockOpenListItem.Locker): void;
+}
+
+// @public (undocumented)
+export namespace RevColumnLayoutOrReference {
+    // (undocumented)
+    export const enum LockErrorId {
+        // (undocumented)
+        DefinitionTry = 0,
+        // (undocumented)
+        ReferenceNotFound = 2,
+        // (undocumented)
+        ReferenceTry = 1
+    }
+    // (undocumented)
+    export interface LockErrorIdPlusTryError {
+        // (undocumented)
+        errorId: LockErrorId;
+        // (undocumented)
+        tryError: string | undefined;
+    }
+}
+
+// @public (undocumented)
+export class RevColumnLayoutOrReferenceDefinition {
+    constructor(definitionOrReferenceId: RevColumnLayoutDefinition | Guid);
+    // (undocumented)
+    readonly columnLayoutDefinition: RevColumnLayoutDefinition | undefined;
+    // (undocumented)
+    readonly referenceId: Guid | undefined;
+    // (undocumented)
+    saveToJson(element: JsonElement): void;
+}
+
+// @public (undocumented)
+export namespace RevColumnLayoutOrReferenceDefinition {
+    // (undocumented)
+    export const enum CreateFromJsonErrorId {
+        // (undocumented)
+        BothReferenceAndDefinitionJsonValuesAreOfWrongType = 1,
+        // (undocumented)
+        DefinitionAllColumnElementsAreInvalid = 6,
+        // (undocumented)
+        DefinitionColumnElementIsNotAnObject = 5,
+        // (undocumented)
+        DefinitionColumnsElementIsNotAnArray = 4,
+        // (undocumented)
+        DefinitionColumnsElementIsNotDefined = 3,
+        // (undocumented)
+        DefinitionJsonValueIsNotOfTypeObject = 2,
+        // (undocumented)
+        NeitherReferenceOrDefinitionJsonValueIsDefined = 0
+    }
+    // (undocumented)
+    export namespace JsonName {
+        const // (undocumented)
+        referenceId = "revReferenceId";
+        const // (undocumented)
+        columnLayoutDefinition = "revColumnLayoutDefinition";
+    }
+    // (undocumented)
+    export function tryCreateFromJson(element: JsonElement): Result<RevColumnLayoutOrReferenceDefinition, CreateFromJsonErrorId>;
+}
+
+// @public (undocumented)
 export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements LockOpenListItem<RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, RevDataSource.LockErrorIdPlusTryError>, IndexedRecord {
-    // Warning: (ae-forgotten-export) The symbol "RevReferenceableColumnLayoutsService" needs to be exported by the entry point public-api.d.ts
     constructor(_referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService, _tableFieldSourceDefinitionFactory: RevTableFieldSourceDefinitionFactory<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _tableRecordSourceFactory: RevTableRecordSourceFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, definition: RevDataSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, id?: Guid, mapKey?: MapKey);
     // (undocumented)
     closeLocked(opener: LockOpenListItem.Opener): void;
-    // Warning: (ae-forgotten-export) The symbol "RevColumnLayoutOrReferenceDefinition" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     createColumnLayoutOrReferenceDefinition(): RevColumnLayoutOrReferenceDefinition;
     // (undocumented)
@@ -79,8 +438,6 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     readonly id: Guid;
     // (undocumented)
     index: number;
-    // Warning: (ae-forgotten-export) The symbol "RevRecordRowOrderDefinition" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     get initialRowOrderDefinition(): RevRecordRowOrderDefinition | undefined;
     // (undocumented)
@@ -89,8 +446,6 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     get lockCount(): number;
     // (undocumented)
     get lockedColumnLayout(): RevColumnLayout | undefined;
-    // Warning: (ae-forgotten-export) The symbol "RevReferenceableColumnLayout" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     get lockedReferenceableColumnLayout(): RevReferenceableColumnLayout | undefined;
     // (undocumented)
@@ -111,7 +466,6 @@ export class RevDataSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDe
     get table(): RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> | undefined;
     // (undocumented)
     tryLock(locker: LockOpenListItem.Locker): Promise<Result<void, RevDataSource.LockErrorIdPlusTryError>>;
-    // Warning: (ae-forgotten-export) The symbol "RevColumnLayoutOrReference" needs to be exported by the entry point public-api.d.ts
     tryOpenColumnLayoutOrReferenceDefinition(definition: RevColumnLayoutOrReferenceDefinition, opener: LockOpenListItem.Opener): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>>;
     // (undocumented)
     unlock(locker: LockOpenListItem.Locker): void;
@@ -352,6 +706,22 @@ export namespace RevDataSourceOrReferenceDefinition {
 }
 
 // @public (undocumented)
+export class RevFavouriteReferenceableColumnLayoutDefinition implements IndexedRecord {
+    // (undocumented)
+    id: Guid;
+    // (undocumented)
+    index: number;
+    // (undocumented)
+    name: string;
+}
+
+// @public (undocumented)
+export class RevFavouriteReferenceableColumnLayoutDefinitionsStoreService {
+    // (undocumented)
+    name: string;
+}
+
+// @public (undocumented)
 export class RevGenericTableField<DataType extends number | string, ValueClass extends RevGenericTableValue<DataType, RenderValueTypeId, RenderAttributeTypeId>, RenderValueTypeId, RenderAttributeTypeId> extends RevTableField<RenderValueTypeId, RenderAttributeTypeId> {
     // (undocumented)
     protected compareDefined(left: RevTableValue<RenderValueTypeId, RenderAttributeTypeId>, right: RevTableValue<RenderValueTypeId, RenderAttributeTypeId>): number;
@@ -370,8 +740,264 @@ export abstract class RevGenericTableValue<T, RenderValueTypeId, RenderAttribute
     isUndefined(): boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "RevSourcedField" needs to be exported by the entry point public-api.d.ts
-//
+// @public (undocumented)
+export interface RevRecord {
+    // (undocumented)
+    __rows?: RevRecord.BoundRows;
+    // (undocumented)
+    index: number;
+}
+
+// @public (undocumented)
+export namespace RevRecord {
+    // (undocumented)
+    export function bindRow(record: RevRecord, rowKey: symbol, row: RevRecordRow | undefined): void;
+    // Warning: (ae-forgotten-export) The symbol "RevRecordRow" needs to be exported by the entry point public-api.d.ts
+    export type BoundRows = Record<symbol, RevRecordRow | undefined>;
+    // (undocumented)
+    export function getBoundRow(record: RevRecord, rowKey: symbol): RevRecordRow | undefined;
+    // (undocumented)
+    export function takeBoundRow(record: RevRecord, rowKey: symbol): RevRecordRow | undefined;
+    // (undocumented)
+    export function unbindRow(record: RevRecord, rowKey: symbol): void;
+}
+
+// @public (undocumented)
+export class RevRecordAssertError extends InternalError {
+    constructor(code: string, message?: string);
+}
+
+// @public (undocumented)
+export interface RevRecordData extends RevRecord {
+    // (undocumented)
+    data: DataServer.ViewRow;
+}
+
+// @public (undocumented)
+export class RevRecordDataError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordDataServer<SF extends RevRecordField> implements DataServer<SF>, RevRecordStore.RecordsEventers {
+    constructor(_schemaServer: RevRecordSchemaServer<SF>, _recordStore: RevRecordStore);
+    // (undocumented)
+    get allChangedRecentDuration(): number;
+    set allChangedRecentDuration(value: number);
+    // (undocumented)
+    allRecordsDeleted(): void;
+    // (undocumented)
+    beginChange(): void;
+    // (undocumented)
+    clearSort(): boolean;
+    // (undocumented)
+    clearSortFieldSpecifiers(): void;
+    // (undocumented)
+    get continuousFiltering(): boolean;
+    set continuousFiltering(value: boolean);
+    // (undocumented)
+    destroy(): void;
+    // (undocumented)
+    endChange(): void;
+    // (undocumented)
+    get filterCallback(): RevRecordDataServer.RecordFilterCallback | undefined;
+    set filterCallback(value: RevRecordDataServer.RecordFilterCallback | undefined);
+    // (undocumented)
+    getEditValue(field: SF, rowIndex: number): DataServer.EditValue;
+    // (undocumented)
+    getFieldSortAscending(field: RevRecordFieldIndex | SF): boolean | undefined;
+    // (undocumented)
+    getFieldSortPriority(field: RevRecordFieldIndex | SF): number | undefined;
+    // (undocumented)
+    getRecordIndexFromRowIndex(rowIndex: number): RevRecordIndex;
+    // (undocumented)
+    getRecordRecentChangeTypeId(rowIndex: number): RevRecordRecentChangeTypeId | undefined;
+    // (undocumented)
+    getRowCount(): number;
+    // (undocumented)
+    getRowIdFromIndex(rowIndex: number): unknown;
+    // (undocumented)
+    getRowIndexFromId(rowId: unknown): number | undefined;
+    // (undocumented)
+    getRowIndexFromRecordIndex(recordIndex: RevRecordIndex): number | undefined;
+    // (undocumented)
+    getSortSpecifier(index: number): RevRecordDataServer.SortFieldSpecifier;
+    // (undocumented)
+    getValueRecentChangeTypeId(field: SF, rowIndex: number): RevRecordValueRecentChangeTypeId | undefined;
+    // (undocumented)
+    getViewValue(field: SF, rowIndex: number): DataServer.ViewValue;
+    // (undocumented)
+    invalidateAll(): void;
+    // (undocumented)
+    invalidateFields(fieldIndexes: readonly RevRecordFieldIndex[]): void;
+    // (undocumented)
+    invalidateFiltering(): void;
+    // (undocumented)
+    invalidateRecord(recordIndex: RevRecordIndex, recent?: boolean): void;
+    // (undocumented)
+    invalidateRecordAndValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[], recordUpdateRecent?: boolean): void;
+    // (undocumented)
+    invalidateRecordFields(recordIndex: RevRecordIndex, fieldIndex: RevRecordFieldIndex, fieldCount: number): void;
+    // (undocumented)
+    invalidateRecords(recordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+    // (undocumented)
+    invalidateRecordValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[]): void;
+    // (undocumented)
+    invalidateValue(fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex, valueRecentChangeTypeId?: RevRecordValueRecentChangeTypeId): void;
+    // (undocumented)
+    isAnyFieldInRangeSorted(rangeFieldIndex: number, rangeCount: number): boolean;
+    // (undocumented)
+    isAnyFieldSorted(fieldIndexes: readonly RevRecordFieldIndex[]): boolean;
+    // (undocumented)
+    isFieldSorted(fieldIndex: RevRecordFieldIndex): boolean;
+    // (undocumented)
+    get isFiltered(): boolean;
+    // Warning: (ae-forgotten-export) The symbol "RevRecordRecentChanges" needs to be exported by the entry point public-api.d.ts
+    //
+    // (undocumented)
+    get recentChanges(): RevRecordRecentChanges;
+    // (undocumented)
+    get recordCount(): number;
+    // (undocumented)
+    recordDeleted(recordIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordInserted(recordIndex: RevRecordIndex, recent?: boolean): void;
+    // (undocumented)
+    get recordInsertedRecentDuration(): number;
+    set recordInsertedRecentDuration(value: number);
+    // (undocumented)
+    recordMoved(fromIndex: RevRecordIndex, toIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordReplaced(recordIndex: RevRecordIndex): void;
+    // (undocumented)
+    recordsDeleted(recordIndex: number, count: number): void;
+    // (undocumented)
+    recordsInserted(firstInsertedRecordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+    // (undocumented)
+    recordsLoaded(recent?: boolean): void;
+    // (undocumented)
+    recordsMoved(fromIndex: RevRecordIndex, toIndex: RevRecordIndex, moveCount: number): void;
+    // (undocumented)
+    recordsReplaced(recordIndex: RevRecordIndex, count: number): void;
+    // (undocumented)
+    recordsSpliced(recordIndex: RevRecordIndex, deleteCount: number, insertCount: number): void;
+    // (undocumented)
+    get recordUpdatedRecentDuration(): number;
+    set recordUpdatedRecentDuration(value: number);
+    // (undocumented)
+    reset(): void;
+    // (undocumented)
+    reverseRowIndex(rowIndex: number): number;
+    // (undocumented)
+    reverseRowIndexIfRowOrderReversed(rowIndex: number): number;
+    // (undocumented)
+    get rowCount(): number;
+    // (undocumented)
+    get rowOrderReversed(): boolean;
+    set rowOrderReversed(value: boolean);
+    // (undocumented)
+    setEditValue(field: SF, rowIndex: number, value: DataServer.EditValue): void;
+    // (undocumented)
+    sort(): void;
+    // (undocumented)
+    sortBy(fieldIndex?: number, isAscending?: boolean): boolean;
+    // (undocumented)
+    sortByMany(specifiers: readonly RevRecordDataServer.SortFieldSpecifier[]): boolean;
+    // (undocumented)
+    get sortColumnCount(): number;
+    // (undocumented)
+    get sortFieldSpecifierCount(): number;
+    // (undocumented)
+    get sortFieldSpecifiers(): readonly RevRecordDataServer.SortFieldSpecifier[];
+    // (undocumented)
+    subscribeDataNotifications(value: DataServer.NotificationsClient): void;
+    // (undocumented)
+    get valueChangedRecentDuration(): number;
+    set valueChangedRecentDuration(value: number);
+}
+
+// @public (undocumented)
+export namespace RevRecordDataServer {
+    // (undocumented)
+    export type RecordFilterCallback = (this: void, record: RevRecord) => boolean;
+    // (undocumented)
+    export interface SortFieldSpecifier {
+        // (undocumented)
+        ascending: boolean;
+        // (undocumented)
+        fieldIndex: RevRecordFieldIndex;
+    }
+    // (undocumented)
+    export type SpecifierComparer = (this: void, left: RevRecordRow, right: RevRecordRow) => number;
+}
+
+// @public (undocumented)
+export interface RevRecordDataStore extends RevRecordStore {
+    getRecord(index: RevRecordIndex): RevRecordData;
+    getRecords(): readonly RevRecordData[];
+    // (undocumented)
+    revRecordData: true;
+}
+
+// @public
+export class RevRecordDateFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => Date);
+}
+
+// @public (undocumented)
+export interface RevRecordDefinition {
+    // (undocumented)
+    readonly mapKey: MapKey;
+}
+
+// @public (undocumented)
+export abstract class RevRecordExternalError extends Error {
+    constructor(code: string, message: string | undefined, baseMessage: string);
+    // (undocumented)
+    readonly code: string;
+}
+
+// @public
+export interface RevRecordField extends SchemaField {
+    compare?(left: RevRecord, right: RevRecord): number;
+    compareDesc?(left: RevRecord, right: RevRecord): number;
+    getEditValue(record: RevRecord): DataServer.EditValue;
+    getViewValue(record: RevRecord): DataServer.ViewValue;
+    // (undocumented)
+    readonly name: string;
+    setEditValue(record: RevRecord, value: DataServer.EditValue): void;
+    valueDependsOnRecordIndex?: boolean;
+    valueDependsOnRowIndex?: boolean;
+}
+
+// @public (undocumented)
+export namespace RevRecordField {
+    // (undocumented)
+    export type Comparer = (this: void, left: RevRecord, right: RevRecord) => number;
+}
+
+// @public
+export type RevRecordFieldIndex = number;
+
+// @public
+export abstract class RevRecordFunctionizeField implements RevRecordField {
+    constructor(name: string, index: number);
+    // (undocumented)
+    compare: (this: void, left: never, right: never) => number;
+    // (undocumented)
+    compareDesc: (this: void, left: never, right: never) => number;
+    // (undocumented)
+    getEditValue(_record: RevRecord): DataServer.EditValue;
+    // (undocumented)
+    getViewValue: (this: void, record: never) => DataServer.ViewValue;
+    // (undocumented)
+    readonly index: number;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    setEditValue(_record: RevRecord, _value: DataServer.EditValue): void;
+}
+
 // @public (undocumented)
 export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>> extends RevColumnLayoutGrid<BGS, BCS, SF> {
     constructor(gridHostElement: HTMLElement, definition: Revgrid.Definition<BCS, SF>, settings: BGS, customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, SF>, options?: Revgrid.Options<BGS, BCS, SF>);
@@ -412,13 +1038,9 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     get fieldCount(): number;
     // (undocumented)
     get fieldNames(): readonly SF[];
-    // Warning: (ae-forgotten-export) The symbol "RevRecordIndex" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     get focusedRecordIndex(): RevRecordIndex | undefined;
     set focusedRecordIndex(recordIndex: number | undefined);
-    // Warning: (ae-forgotten-export) The symbol "RevRecordFieldIndex" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     getField(fieldIndex: RevRecordFieldIndex): SF;
     // (undocumented)
@@ -429,8 +1051,6 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     getFieldSortPriority(field: RevRecordFieldIndex | SF): number | undefined;
     // (undocumented)
     getRowOrderDefinition(): RevRecordRowOrderDefinition;
-    // Warning: (ae-forgotten-export) The symbol "RevRecordSortDefinition" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     getSortFields(): RevRecordSortDefinition.Field[] | undefined;
     // (undocumented)
@@ -455,8 +1075,6 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     isHeaderRow(rowIndex: number): boolean;
     // (undocumented)
     mainClickEventer: RevRecordGrid.MainClickEventer | undefined;
-    // Warning: (ae-forgotten-export) The symbol "RevRecordDataServer" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     mainDataServer: RevRecordDataServer<SF>;
     // (undocumented)
@@ -484,8 +1102,6 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     get rowRecIndices(): number[];
     // (undocumented)
     rowToRecordIndex(rowIdx: number): Integer;
-    // Warning: (ae-forgotten-export) The symbol "RevRecordSchemaServer" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     schemaServer: RevRecordSchemaServer<SF>;
     // (undocumented)
@@ -521,6 +1137,298 @@ export namespace RevRecordGrid {
         // (undocumented)
         readonly rowScrollAnchorIndex: Integer;
     }
+}
+
+// @public
+export type RevRecordIndex = number;
+
+// @public (undocumented)
+export interface RevRecordInvalidatedValue {
+    // (undocumented)
+    fieldIndex: RevRecordFieldIndex;
+    // (undocumented)
+    typeId?: RevRecordValueRecentChangeTypeId;
+}
+
+// @public
+export class RevRecordNumericFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => number);
+}
+
+// @public (undocumented)
+export const enum RevRecordRecentChangeTypeId {
+    // (undocumented)
+    Insert = 1,
+    // (undocumented)
+    Remove = 2,
+    // (undocumented)
+    Update = 0
+}
+
+// @public (undocumented)
+export class RevRecordRowError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordRowOrderDefinition {
+    constructor(sortFields: RevRecordSortDefinition.Field[] | undefined, recordDefinitions: RevRecordDefinition[] | undefined);
+    // (undocumented)
+    readonly recordDefinitions: RevRecordDefinition[] | undefined;
+    // (undocumented)
+    saveToJson(element: JsonElement): void;
+    // (undocumented)
+    readonly sortFields: RevRecordSortDefinition.Field[] | undefined;
+}
+
+// @public (undocumented)
+export namespace RevRecordRowOrderDefinition {
+    // (undocumented)
+    export function createFromJson(element: JsonElement): RevRecordRowOrderDefinition;
+    // (undocumented)
+    export namespace JsonName {
+        const // (undocumented)
+        sortFields = "revSortFields";
+    }
+    // (undocumented)
+    export function saveSortFieldsToJson(sortFields: RevRecordSortDefinition.Field[], element: JsonElement): void;
+    // (undocumented)
+    export function tryCreateSortFieldsFromJson(element: JsonElement): RevRecordSortDefinition.Field[] | undefined;
+}
+
+// @public (undocumented)
+export class RevRecordSchemaError extends RevRecordExternalError {
+    constructor(code: string, message: string);
+}
+
+// @public (undocumented)
+export class RevRecordSchemaServer<SF extends RevRecordField> implements SchemaServer<SF> {
+    // (undocumented)
+    addField(field: SF): SF;
+    // (undocumented)
+    addFields(addFields: readonly SF[]): RevRecordFieldIndex;
+    // (undocumented)
+    beginChange(): void;
+    // (undocumented)
+    endChange(): void;
+    // (undocumented)
+    get fieldCount(): number;
+    // @internal (undocumented)
+    fieldListChangedEventer: RevListChangedEventer | undefined;
+    // (undocumented)
+    get fields(): readonly SF[];
+    // (undocumented)
+    getActiveSchemaColumns(): readonly SF[];
+    // (undocumented)
+    getColumnCount(): number;
+    // (undocumented)
+    getField(fieldIndex: RevRecordFieldIndex): SF;
+    // (undocumented)
+    getFieldByName(fieldName: string): SF;
+    // (undocumented)
+    getFieldIndex(field: SF): RevRecordFieldIndex;
+    // (undocumented)
+    getFieldIndexByName(fieldName: string): RevRecordFieldIndex;
+    // (undocumented)
+    getFieldNames(): string[];
+    // (undocumented)
+    getFields(): readonly SF[];
+    // (undocumented)
+    getFieldValueDependsOnRecordIndexFieldIndexes(): readonly RevRecordFieldIndex[];
+    // (undocumented)
+    getFilteredFields(filterCallback: (field: SF) => boolean): SF[];
+    // (undocumented)
+    hasField(name: string): boolean;
+    // (undocumented)
+    reset(): void;
+    // (undocumented)
+    get schema(): readonly SF[];
+    // (undocumented)
+    setFields(fields: readonly SF[]): void;
+    // (undocumented)
+    subscribeSchemaNotifications(value: SchemaServer.NotificationsClient<SF>): void;
+}
+
+// @public
+export class RevRecordSimpleFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => DataServer.ViewValue, compare?: (left: Record, right: Record) => number, compareDesc?: (left: Record, right: Record) => number);
+}
+
+// @public (undocumented)
+export namespace RevRecordSortDefinition {
+    // (undocumented)
+    export interface Field {
+        // (undocumented)
+        ascending: boolean;
+        // (undocumented)
+        name: string;
+    }
+    // (undocumented)
+    export namespace Field {
+        // (undocumented)
+        export function saveToJson(definition: Field, element: JsonElement): void;
+        // (undocumented)
+        export function tryCreateFromJson(element: JsonElement): Field | undefined;
+    }
+}
+
+// @public
+export interface RevRecordStore {
+    getRecord(index: RevRecordIndex): RevRecord;
+    getRecords(): readonly RevRecord[];
+    readonly recordCount: number;
+    // (undocumented)
+    setRecordEventers(recordsEventers: RevRecordStore.RecordsEventers): void;
+}
+
+// @public (undocumented)
+export namespace RevRecordStore {
+    // (undocumented)
+    export interface RecordsEventers {
+        // (undocumented)
+        allRecordsDeleted(): void;
+        // (undocumented)
+        beginChange(): void;
+        // (undocumented)
+        endChange(): void;
+        // (undocumented)
+        invalidateAll(): void;
+        // (undocumented)
+        invalidateFields(fieldIndexes: readonly RevRecordFieldIndex[]): void;
+        // (undocumented)
+        invalidateFiltering(): void;
+        // (undocumented)
+        invalidateRecord(recordIndex: RevRecordIndex, recent?: boolean): void;
+        // (undocumented)
+        invalidateRecordAndValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[], recordUpdateRecent?: boolean): void;
+        // (undocumented)
+        invalidateRecordFields(recordIndex: RevRecordIndex, fieldIndex: RevRecordFieldIndex, fieldCount: number): void;
+        // (undocumented)
+        invalidateRecords(recordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+        // (undocumented)
+        invalidateRecordValues(recordIndex: RevRecordIndex, invalidatedValues: readonly RevRecordInvalidatedValue[]): void;
+        // (undocumented)
+        invalidateValue(fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex, valueRecentChangeTypeId?: RevRecordValueRecentChangeTypeId): void;
+        // (undocumented)
+        recordDeleted(recordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordInserted(recordIndex: RevRecordIndex, recent?: boolean): void;
+        // (undocumented)
+        recordMoved(fromRecordIndex: RevRecordIndex, toRecordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordReplaced(recordIndex: RevRecordIndex): void;
+        // (undocumented)
+        recordsDeleted(recordIndex: number, count: number): void;
+        // (undocumented)
+        recordsInserted(firstInsertedRecordIndex: RevRecordIndex, count: number, recent?: boolean): void;
+        // (undocumented)
+        recordsLoaded(recent?: boolean): void;
+        // (undocumented)
+        recordsMoved(fromRecordIndex: RevRecordIndex, toRecordIndex: RevRecordIndex, moveCount: number): void;
+        // (undocumented)
+        recordsReplaced(recordIndex: RevRecordIndex, count: number): void;
+        // (undocumented)
+        recordsSpliced(recordIndex: RevRecordIndex, deleteCount: number, insertCount: number): void;
+    }
+}
+
+// @public
+export class RevRecordStringFunctionizeField<Record> extends RevRecordFunctionizeField {
+    constructor(name: string, index: number, value: (record: Record) => string, options?: Intl.CollatorOptions);
+}
+
+// @public (undocumented)
+export namespace RevRecordSysTick {
+    // (undocumented)
+    export function compare(left: Time, right: Time): number;
+    // (undocumented)
+    export function now(): Time;
+    // (undocumented)
+    export type Span = number;
+    // (undocumented)
+    export type Time = number;
+}
+
+// @public (undocumented)
+export class RevRecordUnexpectedUndefinedError extends InternalError {
+    constructor(code: string, message?: string);
+}
+
+// @public (undocumented)
+export class RevRecordUnreachableCaseError extends UnreachableCaseInternalError {
+    constructor(code: string, value: never);
+}
+
+// @public (undocumented)
+export const enum RevRecordValueRecentChangeTypeId {
+    // (undocumented)
+    Decrease = 2,
+    // (undocumented)
+    Increase = 1,
+    // (undocumented)
+    Update = 0
+}
+
+// @public (undocumented)
+export class RevReferenceableColumnLayout extends RevColumnLayout {
+    constructor(definition: RevReferenceableColumnLayoutDefinition, index: Integer);
+    // (undocumented)
+    createDefinition(): RevReferenceableColumnLayoutDefinition;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    readonly upperCaseName: string;
+}
+
+// @public (undocumented)
+export class RevReferenceableColumnLayoutDefinition extends RevColumnLayoutDefinition {
+    constructor(id: Guid, name: string, initialColumns: RevColumnLayoutDefinition.Column[], columnCreateErrorCount: Integer);
+    // (undocumented)
+    id: Guid;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    saveToJson(element: JsonElement): void;
+}
+
+// @public (undocumented)
+export namespace RevReferenceableColumnLayoutDefinition {
+    // (undocumented)
+    export const enum CreateReferenceableFromJsonErrorId {
+        // (undocumented)
+        AllColumnElementsAreInvalid = 7,
+        // (undocumented)
+        ColumnElementIsNotAnObject = 6,
+        // (undocumented)
+        ColumnsElementIsNotAnArray = 5,
+        // (undocumented)
+        ColumnsElementIsNotDefined = 4,
+        // (undocumented)
+        IdJsonValueIsNotDefined = 0,
+        // (undocumented)
+        IdJsonValueIsNotOfTypeString = 1,
+        // (undocumented)
+        NameJsonValueIsNotDefined = 2,
+        // (undocumented)
+        NameJsonValueIsNotOfTypeString = 3
+    }
+    // (undocumented)
+    export function is(definition: RevColumnLayoutDefinition): definition is RevReferenceableColumnLayoutDefinition;
+    // (undocumented)
+    export namespace ReferenceableJsonName {
+        const // (undocumented)
+        id = "revId";
+        const // (undocumented)
+        name = "revName";
+    }
+    // (undocumented)
+    export function tryCreateReferenceableFromJson(element: JsonElement): Result<RevReferenceableColumnLayoutDefinition, CreateReferenceableFromJsonErrorId>;
+}
+
+// @public (undocumented)
+export interface RevReferenceableColumnLayoutsService extends LockItemByKeyList<RevReferenceableColumnLayout> {
+    // (undocumented)
+    getOrNew(definition: RevReferenceableColumnLayoutDefinition): RevReferenceableColumnLayout;
 }
 
 // @public (undocumented)
@@ -634,6 +1542,134 @@ export namespace RevRenderValue {
 }
 
 // @public (undocumented)
+export abstract class RevSourcedField<RenderValueTypeId, RenderAttributeTypeId> implements RevRecordField {
+    constructor(definition: RevSourcedFieldDefinition, heading?: string);
+    // (undocumented)
+    readonly definition: RevSourcedFieldDefinition;
+    // (undocumented)
+    getEditValue(record: IndexedRecord): DataServer.EditValue;
+    // (undocumented)
+    getEditValueEventer: RevSourcedField.GetEditValueEventer | undefined;
+    // (undocumented)
+    abstract getViewValue(record: IndexedRecord): RevRenderValue<RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    heading: string;
+    // (undocumented)
+    index: Integer;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    setEditValue(record: IndexedRecord, value: DataServer.EditValue): void;
+    // (undocumented)
+    setEditValueEventer: RevSourcedField.SetEditValueEventer | undefined;
+}
+
+// @public (undocumented)
+export namespace RevSourcedField {
+    // (undocumented)
+    export namespace Field {
+        // (undocumented)
+        export function checkOrder(): void;
+        const // (undocumented)
+        idCount: number;
+        // (undocumented)
+        export type Id = FieldId;
+        // (undocumented)
+        export function idToHorizontalAlign(id: Id): HorizontalAlignEnum;
+        // (undocumented)
+        export function idToName(id: Id): string;
+    }
+    // (undocumented)
+    export const enum FieldId {
+        // (undocumented)
+        DefaultHeading = 3,
+        // (undocumented)
+        DefaultTextAlign = 4,
+        // (undocumented)
+        DefaultWidth = 5,
+        // (undocumented)
+        Heading = 1,
+        // (undocumented)
+        Name = 0,
+        // (undocumented)
+        SourceName = 2
+    }
+    // (undocumented)
+    export function generateHeading(customHeadingsService: RevSourcedFieldCustomHeadingsService, fieldDefinition: RevSourcedFieldDefinition): string;
+    // (undocumented)
+    export type GetEditValueEventer = (this: void, record: IndexedRecord) => DataServer.EditValue;
+    // (undocumented)
+    export type SetEditValueEventer = (this: void, record: IndexedRecord, value: DataServer.EditValue) => void;
+}
+
+// @public (undocumented)
+export class RevSourcedFieldCustomHeadingsService {
+    // (undocumented)
+    checkSave(): void;
+    // (undocumented)
+    load(): void;
+    // (undocumented)
+    save(): void;
+    // (undocumented)
+    setFieldHeading(sourceName: string, fieldName: string, text: string): void;
+    // (undocumented)
+    tryGetFieldHeading(sourceName: string, fieldName: string): string | undefined;
+}
+
+// @public (undocumented)
+export class RevSourcedFieldDefinition {
+    constructor(sourceDefinition: RevSourcedFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, defaultWidth?: number | undefined);
+    // (undocumented)
+    readonly defaultHeading: string;
+    // (undocumented)
+    readonly defaultTextAlign: HorizontalAlign;
+    // (undocumented)
+    readonly defaultWidth?: number | undefined;
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    readonly sourceDefinition: RevSourcedFieldSourceDefinition;
+    // (undocumented)
+    readonly sourcelessName: string;
+}
+
+// @public (undocumented)
+export namespace RevSourcedFieldDefinition {
+    // (undocumented)
+    export namespace Name {
+        // (undocumented)
+        export function compose(sourceName: string, sourcelessName: string): string;
+        // (undocumented)
+        export type DecomposedArray = [sourceName: string, sourcelessName: string];
+        // (undocumented)
+        export const enum DecomposeErrorId {
+            // (undocumented)
+            NotHas2Elements = 2,
+            // (undocumented)
+            QuotesNotClosedInLastElement = 1,
+            // (undocumented)
+            UnexpectedCharAfterQuotedElement = 0
+        }
+        // (undocumented)
+        export interface DecomposeErrorIdPlusExtra {
+            // (undocumented)
+            readonly errorId: DecomposeErrorId;
+            // (undocumented)
+            readonly extraInfo: string;
+        }
+        // (undocumented)
+        export function tryDecompose(name: string): Result<DecomposedArray, DecomposeErrorIdPlusExtra>;
+    }
+}
+
+// @public (undocumented)
+export class RevSourcedFieldSourceDefinition {
+    constructor(name: string);
+    // (undocumented)
+    readonly name: string;
+}
+
+// @public (undocumented)
 export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> {
     constructor(recordSource: RevTableRecordSource<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness>, _correctnessState: CorrectnessState<Badness>, initialActiveFieldSources: readonly TableFieldSourceDefinitionTypeId[]);
     // (undocumented)
@@ -644,8 +1680,6 @@ export class RevTable<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinit
     clearRendering(): void;
     // (undocumented)
     close(opener: NamedOpener): void;
-    // Warning: (ae-forgotten-export) The symbol "RevAllowedSourcedField" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     createAllowedFields(): readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[];
     // (undocumented)
@@ -823,8 +1857,6 @@ export namespace RevTable {
         // (undocumented)
         used: boolean;
     }
-    // Warning: (ae-forgotten-export) The symbol "RevRecordInvalidatedValue" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     export type RecordValuesChangedEventHandler = (this: void, recordIdx: Integer, invalidatedValues: RevRecordInvalidatedValue[]) => void;
 }
@@ -854,11 +1886,8 @@ export abstract class RevTableField<RenderValueTypeId, RenderAttributeTypeId> ex
 export namespace RevTableField {
     // (undocumented)
     export type Constructor<RenderValueTypeId, RenderAttributeTypeId> = new (textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, definition: RevTableField.Definition<RenderValueTypeId, RenderAttributeTypeId>, heading: string, index: Integer) => RevTableField<RenderValueTypeId, RenderAttributeTypeId>;
-    // Warning: (ae-forgotten-export) The symbol "RevSourcedFieldDefinition" needs to be exported by the entry point public-api.d.ts
-    //
     // (undocumented)
     export class Definition<RenderValueTypeId, RenderAttributeTypeId> extends RevSourcedFieldDefinition {
-        // Warning: (ae-forgotten-export) The symbol "RevSourcedFieldSourceDefinition" needs to be exported by the entry point public-api.d.ts
         constructor(sourceDefinition: RevSourcedFieldSourceDefinition, sourcelessName: string, defaultHeading: string, defaultTextAlign: HorizontalAlign, gridFieldConstructor: RevTableField.Constructor<RenderValueTypeId, RenderAttributeTypeId>, gridValueConstructor: RevTableValue.Constructor<RenderValueTypeId, RenderAttributeTypeId>);
         // (undocumented)
         readonly gridFieldConstructor: RevTableField.Constructor<RenderValueTypeId, RenderAttributeTypeId>;
@@ -869,7 +1898,6 @@ export namespace RevTableField {
 
 // @public (undocumented)
 export class RevTableFieldSource<TypeId, RenderValueTypeId, RenderAttributeTypeId> {
-    // Warning: (ae-forgotten-export) The symbol "RevSourcedFieldCustomHeadingsService" needs to be exported by the entry point public-api.d.ts
     constructor(_textFormatter: RevRenderValue.TextFormatter<RenderValueTypeId, RenderAttributeTypeId>, _customHeadingsService: RevSourcedFieldCustomHeadingsService, definition: RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId>, _headingPrefix: string);
     // (undocumented)
     createTableFields(): RevTableField<RenderValueTypeId, RenderAttributeTypeId>[];
@@ -991,8 +2019,6 @@ export namespace RevTableRecord {
     export type ValuesChangedEventHandler = (this: void, recordIdx: Integer, invalidatedValues: RevRecordInvalidatedValue[]) => void;
 }
 
-// Warning: (ae-forgotten-export) The symbol "RevRecordDefinition" needs to be exported by the entry point public-api.d.ts
-//
 // @public (undocumented)
 export interface RevTableRecordDefinition<TableFieldSourceDefinitionTypeId> extends RevRecordDefinition {
     // (undocumented)
@@ -1153,8 +2179,6 @@ export interface RevTableRecordSourceFactory<TypeId, TableFieldSourceDefinitionT
     createCorrectnessState(): CorrectnessState<Badness>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "RevRecordStore" needs to be exported by the entry point public-api.d.ts
-//
 // @public (undocumented)
 export class RevTableRecordStore<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, Badness> implements RevRecordStore {
     // (undocumented)
@@ -1269,8 +2293,6 @@ export namespace RevTableValueSource {
         fieldIndex: Integer;
         // (undocumented)
         newValue: RevTableValue<RenderValueTypeId, RenderAttributeTypeId>;
-        // Warning: (ae-forgotten-export) The symbol "RevRecordValueRecentChangeTypeId" needs to be exported by the entry point public-api.d.ts
-        //
         // (undocumented)
         recentChangeTypeId: RevRecordValueRecentChangeTypeId | undefined;
     }

@@ -1,0 +1,21 @@
+// (c) 2024 Xilytix Pty Ltd / Paul Klink
+
+{
+  "extends": "../../../tsconfig.code.json",
+
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/table-server-record.tsbuildinfo"
+  },
+
+  "include": [
+    "*.ts"
+  ],
+
+  "references": [
+    { "path": "../value-source/tsconfig.json" },
+    { "path": "../value/tsconfig.json" },
+    { "path": "../../../render-value/tsconfig.json" },
+    { "path": "../../../record/server/tsconfig.json" },
+  ]
+}

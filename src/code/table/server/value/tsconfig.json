@@ -5,10 +5,14 @@
 
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "../../../../../tsbuildinfo/record-server-record.tsbuildinfo"
+    "tsBuildInfoFile": "../../../../../tsbuildinfo/table-server-value.tsbuildinfo"
   },
 
   "include": [
     "*.ts"
+  ],
+
+  "references": [
+    { "path": "../../../render-value/tsconfig.json" },
   ]
 }
