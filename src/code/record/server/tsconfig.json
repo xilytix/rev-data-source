@@ -10,11 +10,5 @@
 
   "include": [
     "*.ts"
-  ],
-
-  "references": [
-    { "path": "./allowed-sourced-field/tsconfig.json" },
-    { "path": "./sourced-field/tsconfig.json" },
-    { "path": "./record/tsconfig.json" },
   ]
 }

@@ -4,15 +4,22 @@ import { BehavioredColumnSettings, BehavioredGridSettings, DataServer, DatalessS
 import { AssertInternalError, Integer } from '@xilytix/sysutils';
 import { RevColumnLayoutGrid } from '../column-layout/internal-api';
 import { RevColumnLayout } from '../column-layout/server/internal-api';
-import { RevAllowedSourcedField, RevAllowedSourcedFieldsColumnLayoutDefinition, RevRecordDataServer, RevRecordFieldIndex, RevRecordIndex, RevRecordRowOrderDefinition, RevRecordSchemaServer, RevRecordSortDefinition, RevRecordStore, RevSourcedField } from './server/internal-api';
+import {
+    RevRecordDataServer,
+    RevRecordField,
+    RevRecordFieldIndex,
+    RevRecordIndex,
+    RevRecordRowOrderDefinition,
+    RevRecordSchemaServer,
+    RevRecordSortDefinition,
+    RevRecordStore,
+} from './server/internal-api';
 
 /** @public */
 export class RevRecordGrid<
-    RenderValueTypeId,
-    RenderAttributeTypeId,
     BGS extends BehavioredGridSettings,
     BCS extends BehavioredColumnSettings,
-    SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>
+    SF extends RevRecordField
 > extends RevColumnLayoutGrid<BGS, BCS, SF> {
     declare schemaServer: RevRecordSchemaServer<SF>;
     declare mainDataServer: RevRecordDataServer<SF>;
@@ -22,7 +29,7 @@ export class RevRecordGrid<
     mainClickEventer: RevRecordGrid.MainClickEventer | undefined;
     mainDblClickEventer: RevRecordGrid.MainDblClickEventer | undefined;
     selectionChangedEventer: RevRecordGrid.SelectionChangedEventer | undefined;
-    dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<RenderValueTypeId, RenderAttributeTypeId, SF> | undefined;
+    dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<SF> | undefined;
 
     private _allowedFields: readonly SF[] | undefined;
 
@@ -283,11 +290,6 @@ export class RevRecordGrid<
         return this.mainDataServer.sortByMany(specifiers);
     }
 
-    createAllowedSourcedFieldsColumnLayoutDefinition(allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[]) {
-        const definitionColumns = this.createColumnLayoutDefinitionColumns();
-        return new RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>(definitionColumns, allowedFields, this.settings.fixedColumnCount);
-    }
-
     protected override areFieldsAllowed() {
         return this._allowedFields !== undefined;
     }
@@ -431,11 +433,7 @@ export namespace RevRecordGrid {
     export type MainClickEventer = (this: void, fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex) => void;
     export type MainDblClickEventer = (this: void, fieldIndex: RevRecordFieldIndex, recordIndex: RevRecordIndex) => void;
     export type SelectionChangedEventer = (this: void) => void;
-    export type DataServersRowListChangedEventer<
-        RenderValueTypeId,
-        RenderAttributeTypeId,
-        SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>
-    > = (this: void, dataServers: DataServer<SF>[]) => void;
+    export type DataServersRowListChangedEventer<SF extends RevRecordField> = (this: void, dataServers: DataServer<SF>[]) => void;
     export type FieldSortedEventer = (this: void) => void;
 
     export interface MainSubgridDefinitionOptions {

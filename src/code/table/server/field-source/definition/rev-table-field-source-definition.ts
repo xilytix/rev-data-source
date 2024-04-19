@@ -2,7 +2,7 @@
 
 import { Integer } from '@xilytix/sysutils';
 // import { GridRecordFieldState } from '../../../record/grid-record-internal-api';
-import { RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../../../record/server/internal-api';
+import { RevSourcedFieldDefinition, RevSourcedFieldSourceDefinition } from '../../../../sourced-field/server/internal-api';
 import { RevTableField } from '../../field/internal-api';
 import { RevTableValue } from '../../value/internal-api';
 

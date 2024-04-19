@@ -8,7 +8,8 @@ import {
     RevReferenceableColumnLayout,
     RevReferenceableColumnLayoutsService
 } from "../../../column-layout/server/internal-api";
-import { RevRecordRowOrderDefinition, RevSourcedFieldDefinition } from '../../../record/server/internal-api';
+import { RevRecordRowOrderDefinition } from '../../../record/server/internal-api';
+import { RevSourcedFieldDefinition } from '../../../sourced-field/server/internal-api';
 import { RevTableFieldSourceDefinitionFactory } from '../field-source/internal-api';
 import { RevTableRecordSource, RevTableRecordSourceDefinition, RevTableRecordSourceFactory } from '../record-source/internal-api';
 import { RevTable } from '../table/internal-api';

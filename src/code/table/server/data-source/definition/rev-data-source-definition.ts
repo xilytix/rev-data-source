@@ -2,7 +2,7 @@
 
 import { Err, JsonElement, Ok, Result, UnreachableCaseError } from '@xilytix/sysutils';
 import { RevColumnLayoutOrReferenceDefinition } from '../../../../column-layout/server/internal-api';
-import { RevRecordRowOrderDefinition } from '../../../../record/server/record/internal-api';
+import { RevRecordRowOrderDefinition } from '../../../../record/server/internal-api';
 import { RevTableRecordSourceDefinition, RevTableRecordSourceDefinitionFromJsonFactory } from '../../record-source/internal-api';
 
 /** @public */

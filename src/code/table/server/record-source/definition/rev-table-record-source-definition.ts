@@ -1,8 +1,8 @@
 // (c) 2024 Xilytix Pty Ltd / Paul Klink
 
-import { JsonElement } from '@xilytix/sysutils';
+import { JsonElement, Result } from '@xilytix/sysutils';
 import { RevColumnLayoutDefinition } from '../../../../column-layout/server/internal-api';
-import { RevAllowedSourcedField, RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../../../record/server/internal-api';
+import { RevAllowedSourcedField, RevSourcedField, RevSourcedFieldCustomHeadingsService } from '../../../../sourced-field/server/internal-api';
 import { RevTableFieldSourceDefinitionCachingFactoryService } from '../../field-source/internal-api';
 
 /** @public */
@@ -65,7 +65,7 @@ export abstract class RevTableRecordSourceDefinition<TypeId, TableFieldSourceDef
 export namespace RevTableRecordSourceDefinition {
     export const jsonTag_TypeId = 'recordSourceDefinitionTypeId';
 
-    export function tryGetTypeIdNameFromJson(element: JsonElement) {
+    export function tryGetTypeIdNameFromJson(element: JsonElement): Result<string, JsonElement.ErrorId.JsonValueIsNotDefined | JsonElement.ErrorId.JsonValueIsNotOfTypeString> {
         return element.tryGetString(jsonTag_TypeId);
     }
 }

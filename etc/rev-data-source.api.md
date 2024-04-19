@@ -1003,7 +1003,7 @@ export abstract class RevRecordFunctionizeField implements RevRecordField {
 }
 
 // @public (undocumented)
-export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>> extends RevColumnLayoutGrid<BGS, BCS, SF> {
+export class RevRecordGrid<BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends RevRecordField> extends RevColumnLayoutGrid<BGS, BCS, SF> {
     constructor(gridHostElement: HTMLElement, recordStore: RevRecordStore, getMainCellPainterEventer: Subgrid.GetCellPainterEventer<BCS, SF>, extraSubgridDefinitions: Subgrid.Definition<BCS, SF>[], settings: BGS, customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, SF>, options?: Revgrid.Options<BGS, BCS, SF>, mainSubgridDefinitionOptions?: RevRecordGrid.MainSubgridDefinitionOptions);
     // (undocumented)
     applyFilter(filter?: RevRecordDataServer.RecordFilterCallback): void;
@@ -1021,9 +1021,7 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
     get continuousFiltering(): boolean;
     set continuousFiltering(value: boolean);
     // (undocumented)
-    createAllowedSourcedFieldsColumnLayoutDefinition(allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[]): RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>;
-    // (undocumented)
-    dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<RenderValueTypeId, RenderAttributeTypeId, SF> | undefined;
+    dataServersRowListChangedEventer: RevRecordGrid.DataServersRowListChangedEventer<SF> | undefined;
     // (undocumented)
     protected descendantProcessClick(event: MouseEvent, hoverCell: LinedHoverCell<BCS, SF> | null | undefined): void;
     // (undocumented)
@@ -1123,7 +1121,7 @@ export class RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends
 // @public (undocumented)
 export namespace RevRecordGrid {
     // (undocumented)
-    export type DataServersRowListChangedEventer<RenderValueTypeId, RenderAttributeTypeId, SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>> = (this: void, dataServers: DataServer<SF>[]) => void;
+    export type DataServersRowListChangedEventer<SF extends RevRecordField> = (this: void, dataServers: DataServer<SF>[]) => void;
     // (undocumented)
     export type FieldSortedEventer = (this: void) => void;
     // (undocumented)
@@ -1680,6 +1678,12 @@ export namespace RevSourcedFieldDefinition {
 }
 
 // @public (undocumented)
+export class RevSourcedFieldGrid<RenderValueTypeId, RenderAttributeTypeId, BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings, SF extends RevSourcedField<RenderValueTypeId, RenderAttributeTypeId>> extends RevRecordGrid<BGS, BCS, SF> {
+    // (undocumented)
+    createAllowedSourcedFieldsColumnLayoutDefinition(allowedFields: readonly RevAllowedSourcedField<RenderValueTypeId, RenderAttributeTypeId>[]): RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>;
+}
+
+// @public (undocumented)
 export class RevSourcedFieldSourceDefinition {
     constructor(name: string);
     // (undocumented)
@@ -1994,6 +1998,71 @@ export interface RevTableFieldSourceDefinitionFactory<TypeId, RenderValueTypeId,
     create(typeId: TypeId): RevTableFieldSourceDefinition<TypeId, RenderValueTypeId, RenderAttributeTypeId>;
     // (undocumented)
     tryNameToId(name: string): TypeId | undefined;
+}
+
+// @public (undocumented)
+export class RevTableGrid<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId, BGS extends BehavioredGridSettings, BCS extends BehavioredColumnSettings> extends RevSourcedFieldGrid<RenderValueTypeId, RenderAttributeTypeId, BGS, BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>> {
+    constructor(gridFieldCustomHeadingsService: RevSourcedFieldCustomHeadingsService, _referenceableColumnLayoutsService: RevReferenceableColumnLayoutsService | undefined, tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, tableRecordSourceDefinitionFactoryService: RevTableRecordSourceDefinitionFromJsonFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, _referenceableDataSourcesService: RevReferenceableDataSourcesService<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId> | undefined, _tableRecordSourceFactory: RevTableRecordSourceFactory<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, gridHostElement: HTMLElement, getMainCellPainterEventer: Subgrid.GetCellPainterEventer<BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>>, extraSubgridDefinitions: Subgrid.Definition<BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>>[], settings: BGS, customiseSettingsForNewColumnEventer: Revgrid.GetSettingsForNewColumnEventer<BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>>, options?: Revgrid.Options<BGS, BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>>);
+    // (undocumented)
+    applyColumnLayoutOrReferenceDefinition(definition: RevColumnLayoutOrReferenceDefinition): void;
+    // (undocumented)
+    get badness(): Badness;
+    // (undocumented)
+    canCreateAllowedSourcedFieldsColumnLayoutDefinition(): boolean;
+    // (undocumented)
+    clearRendering(): void;
+    // (undocumented)
+    closeGridSource(keepView: boolean): void;
+    // (undocumented)
+    columnLayoutSetEventer: RevTableGrid.ColumnLayoutSetEventer | undefined;
+    // (undocumented)
+    createAllowedSourcedFieldsColumnLayoutDefinition(): RevAllowedSourcedFieldsColumnLayoutDefinition<RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    createColumnLayoutOrReferenceDefinition(): RevColumnLayoutOrReferenceDefinition;
+    // (undocumented)
+    createGridSourceOrReferenceDefinition(): RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    createRecordDefinition(index: Integer): RevTableRecordDefinition<TableFieldSourceDefinitionTypeId>;
+    // (undocumented)
+    createTableRecordSourceDefinition(): RevTableRecordSourceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    readonly gridFieldCustomHeadingsService: RevSourcedFieldCustomHeadingsService;
+    // (undocumented)
+    keepPreviousLayoutIfPossible: boolean;
+    // (undocumented)
+    keptColumnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition | undefined;
+    // (undocumented)
+    get opened(): boolean;
+    // (undocumented)
+    openedEventer: RevTableGrid.OpenedEventer | undefined;
+    // (undocumented)
+    get openedRecordSource(): RevTableRecordSource<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    get openedTable(): RevTable<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    opener: LockOpenListItem.Opener;
+    // (undocumented)
+    get recordCount(): Integer;
+    // (undocumented)
+    subscribeBadnessChangedEvent(handler: CorrectnessState.BadnessChangedEventHandler): MultiEvent.SubscriptionId;
+    // (undocumented)
+    readonly tableFieldSourceDefinitionCachingFactoryService: RevTableFieldSourceDefinitionCachingFactoryService<TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    readonly tableRecordSourceDefinitionFactoryService: RevTableRecordSourceDefinitionFromJsonFactory<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>;
+    // (undocumented)
+    tryOpenColumnLayoutOrReferenceDefinition(columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>>;
+    // (undocumented)
+    tryOpenGridSource(definition: RevDataSourceOrReferenceDefinition<TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, keepView: boolean): Promise<Result<RevDataSourceOrReference<Badness, TableRecordSourceDefinitionTypeId, TableFieldSourceDefinitionTypeId, RenderValueTypeId, RenderAttributeTypeId>, RevDataSourceOrReference.LockErrorIdPlusTryError>>;
+    // (undocumented)
+    unsubscribeBadnessChangedEvent(subscriptionId: MultiEvent.SubscriptionId): void;
+}
+
+// @public (undocumented)
+export namespace RevTableGrid {
+    // (undocumented)
+    export type ColumnLayoutSetEventer = (this: void, layout: RevColumnLayout) => void;
+    // (undocumented)
+    export type OpenedEventer = (this: void) => void;
 }
 
 // @public (undocumented)

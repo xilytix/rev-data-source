@@ -2,8 +2,9 @@
 
 import { BehavioredColumnSettings, BehavioredGridSettings, Revgrid, Subgrid } from '@xilytix/revgrid';
 import { AssertInternalError, CorrectnessState, Integer, LockOpenListItem, MultiEvent, Ok, Result } from '@xilytix/sysutils';
-import { RevColumnLayout, RevColumnLayoutOrReferenceDefinition, RevReferenceableColumnLayoutsService } from '../column-layout/internal-api';
-import { RevAllowedSourcedFieldsColumnLayoutDefinition, RevRecordGrid, RevRecordRowOrderDefinition, RevSourcedFieldCustomHeadingsService } from '../record/internal-api';
+import { RevColumnLayout, RevColumnLayoutOrReference, RevColumnLayoutOrReferenceDefinition, RevReferenceableColumnLayoutsService } from '../column-layout/internal-api';
+import { RevRecordGrid, RevRecordRowOrderDefinition } from '../record/internal-api';
+import { RevAllowedSourcedFieldsColumnLayoutDefinition, RevSourcedFieldCustomHeadingsService, RevSourcedFieldGrid } from '../sourced-field/internal-api';
 import {
     RevDataSource,
     RevDataSourceOrReference,
@@ -29,7 +30,7 @@ export class RevTableGrid<
     RenderAttributeTypeId,
     BGS extends BehavioredGridSettings,
     BCS extends BehavioredColumnSettings,
-> extends RevRecordGrid<RenderValueTypeId, RenderAttributeTypeId, BGS, BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>> {
+> extends RevSourcedFieldGrid<RenderValueTypeId, RenderAttributeTypeId, BGS, BCS, RevTableField<RenderValueTypeId, RenderAttributeTypeId>> {
     opener: LockOpenListItem.Opener;
     keepPreviousLayoutIfPossible = false;
     keptColumnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition | undefined;
@@ -285,7 +286,7 @@ export class RevTableGrid<
         }
     }
 
-    tryOpenColumnLayoutOrReferenceDefinition(columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition) {
+    tryOpenColumnLayoutOrReferenceDefinition(columnLayoutOrReferenceDefinition: RevColumnLayoutOrReferenceDefinition): Promise<Result<void, RevColumnLayoutOrReference.LockErrorIdPlusTryError>> {
         if (this._openedDataSource === undefined) {
             throw new AssertInternalError('GSFOGLONRD22209');
         } else {

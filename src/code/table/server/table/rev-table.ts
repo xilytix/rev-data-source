@@ -10,7 +10,8 @@ import {
     UsableListChangeTypeId,
     moveElementsInArray
 } from '@xilytix/sysutils';
-import { RevAllowedSourcedField, RevRecordInvalidatedValue } from '../../../record/server/internal-api';
+import { RevRecordInvalidatedValue } from '../../../record/server/internal-api';
+import { RevAllowedSourcedField } from '../../../sourced-field/server/internal-api';
 import { RevTableField } from '../field/internal-api';
 import { RevTableRecordDefinition } from '../record-definition/internal-api';
 import { RevTableRecordSource } from '../record-source/internal-api';

@@ -10,7 +10,7 @@
   ],
   "references": [
     { "path": "../../record-source/tsconfig.json" },
-    { "path": "../../../../record/server/record/tsconfig.json" },
+    { "path": "../../../../record/server/tsconfig.json" },
     { "path": "../../../../column-layout/server/tsconfig.json" },
   ]
 }

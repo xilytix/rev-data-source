@@ -9,7 +9,7 @@ import { RevRecordRow } from './rev-record-row';
 import { RevRecordRowMap } from './rev-record-row-map';
 import { RevRecordSchemaServer } from './rev-record-schema-server';
 import { RevRecordStore } from './rev-record-store';
-import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordValueRecentChangeTypeId } from './rev-record-types';
+import { RevRecordFieldIndex, RevRecordIndex, RevRecordInvalidatedValue, RevRecordRecentChangeTypeId, RevRecordValueRecentChangeTypeId } from './rev-record-types';
 
 /** @public */
 export class RevRecordDataServer<SF extends RevRecordField> implements DataServer<SF>, RevRecordStore.RecordsEventers {
@@ -34,6 +34,23 @@ export class RevRecordDataServer<SF extends RevRecordField> implements DataServe
 
     private _callbackListener: DataServer.NotificationsClient;
     private _recordStoreEventersSet = false;
+
+    constructor(
+        private readonly _schemaServer: RevRecordSchemaServer<SF>,
+        private readonly _recordStore: RevRecordStore,
+    ) {
+        this._recordRowMap = new RevRecordRowMap(this._recordRowBindingKey);
+        this._rows = this._recordRowMap.rows;
+        this._recentChanges = new RevRecordRecentChanges(
+            this._recordRowMap,
+            (expiredCellPositions, expiredCellCount, expiredRowIndexes, expiredRowCount) => {
+                this.handleExpiredRecentChanges(expiredCellPositions, expiredCellCount, expiredRowIndexes, expiredRowCount);
+            }
+        );
+        this._schemaServer.fieldListChangedEventer = (typeId, index, count) => {
+            this.processFieldListChangedEvent(typeId, index, count);
+        };
+    }
 
     get recentChanges() { return this._recentChanges; }
     get rowCount(): number { return this._rows.length; }
@@ -72,23 +89,6 @@ export class RevRecordDataServer<SF extends RevRecordField> implements DataServe
     set recordUpdatedRecentDuration(value: number) { this._recentChanges.recordUpdatedRecentDuration = value; }
     get valueChangedRecentDuration() { return this._recentChanges.valueChangedRecentDuration; }
     set valueChangedRecentDuration(value: number) { this._recentChanges.valueChangedRecentDuration = value; }
-
-    constructor(
-        private readonly _schemaServer: RevRecordSchemaServer<SF>,
-        private readonly _recordStore: RevRecordStore,
-    ) {
-        this._recordRowMap = new RevRecordRowMap(this._recordRowBindingKey);
-        this._rows = this._recordRowMap.rows;
-        this._recentChanges = new RevRecordRecentChanges(
-            this._recordRowMap,
-            (expiredCellPositions, expiredCellCount, expiredRowIndexes, expiredRowCount) => {
-                this.handleExpiredRecentChanges(expiredCellPositions, expiredCellCount, expiredRowIndexes, expiredRowCount);
-            }
-        );
-        this._schemaServer.fieldListChangedEventer = (typeId, index, count) => {
-            this.processFieldListChangedEvent(typeId, index, count);
-        };
-    }
 
     destroy() {
         this._schemaServer.fieldListChangedEventer = undefined;
@@ -244,7 +244,7 @@ export class RevRecordDataServer<SF extends RevRecordField> implements DataServe
         return this._recordRowMap.getRecordIndexFromRowIndex(rowIndex);
     }
 
-    getRecordRecentChangeTypeId(rowIndex: number) {
+    getRecordRecentChangeTypeId(rowIndex: number): RevRecordRecentChangeTypeId | undefined {
         if (this._rowOrderReversed) {
             rowIndex = this.reverseRowIndex(rowIndex);
         }
